@@ -4,8 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join me!</title>
+    <link rel="stylesheet" href='static/css/join_me_style.css'>
+    <script src="{{ url_for('static', filename='js/join_me.js') }}"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cantarell:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Pacifico&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    
+    <div class="header">
+        <p>Welcome to</p>
+    </div>
+
+
+    <div class="join_me_container">
+        <h1>Join me!</h1>
+    </div>
+    <div class="form_container">
+        <form method="POST" action="/create_user">
+        <label>Username: <input type="text" name = "username"></label>
+        <label>Email: <input type="email" name = "email"></label>
+        <label>Password: <input type="password" name = "password"></label>
+        <input type="submit" value="create">
+        </form>
+    </div>
 </body>
 </html>
