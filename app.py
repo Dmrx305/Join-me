@@ -206,12 +206,50 @@ def delete_profile():
     db.session.commit()
 
     return jsonify({'message': 'Profile deleted'}), 200
-
+#-------------------------------------------------------------------
 
 @app.route('/api/interests', methods=['GET'])
 def get_interests():
     interests = Interest.query.all()
     return jsonify([{"id": interests.id, "name": interests.name} for i in interests])
+#--------------------------------------------------------------------
+@app.route('/api/home',methods=['GET'])
+@jwt_required()
+def home():
+    current_username = get_jwt_identity()
+    user = User.query.filter_by(username=current_username).first()
+
+    if not user or not user.profile:
+        return jsonify({error: "User has no profile yet"}), 404
+    
+    #Stadt des aktuellen Users
+    city = user.profile.city
+
+    #Interessen des aktuellen Users
+    user_interest_ids = [i.id for i in user.profile.interests]
+
+    if not city or not user_interest_ids:
+        return jsonify({"error": "User profile incomplete (city or interests missing)"}), 400
+    
+    #Matching Users aber nicht der selbe User
+    matching_users = Profile.query.filter(
+        Profile.city == city,
+        Profile.user_id != user.id
+    ).all()
+
+    results = []
+    for profile in matching_users:
+        matching_users_ids = [i.id for i in profile_interests]
+        if set(user_interest_ids) & set(matching_users_ids): #min 1 Interesse gleich
+            results.append({
+                "name": profile.name,
+                "photo": f"/uploads/{profile.photo}" if profile.photo else None,
+                "city": profile.city,
+                "sharded_interests": [
+                    i.name for i in profile.interests if i.id user_interest_ids
+                ]
+            })
+    return jsonify(results), 200
 
 
 if __name__ == '__main__':
