@@ -45,8 +45,10 @@ profile_interests = db.Table(
 class Profile(db.Model):
     __tablename__= 'profiles'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(80))
-    age = db.Column(db.Integer)
+    name = db.Column(db.String(80), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    city = db.Column(db.String(50), nullable=False)
+    social_type = db.Column(db.String(20), nullable=False)
     photo = db.Column(db.String(200)) #Fotopfad
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -59,7 +61,6 @@ class Interest(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
    
-
 
 @app.before_request
 def create_interests():
@@ -88,11 +89,15 @@ def create_or_update_profile():
 
     name = request.form.get('name')
     age = int(request.form.get('age')) if request.form.get('age') else None
-    photo = request.form.get('photo')
-
+    city = request.form.get('city')
+    social_type = request.form.get('social_type') 
+    photo = request.files.get('photo')
     interest_ids = request.form.getlist('interest_ids')
+
     interests_objs =[]
-    
+    if interest_ids:
+        interests_objs = Interest.query.filter(Interest.id.in_(interest_ids)).all()
+
 
 
     photo_filename = None
@@ -106,6 +111,8 @@ def create_or_update_profile():
         #profil updaten
         user.profile.name = name
         user.profile.age = age
+        user.profile.city = city
+        user.profile.social_type = social_type
         if photo_filename:
             user.profile.photo = photo_filename
         if interests_objs:
@@ -116,6 +123,8 @@ def create_or_update_profile():
         profile = Profile(
             name=name,
             age=age,
+            city=city,
+            social_type=social_type,
             photo=photo_filename,
             user=user,
             )
@@ -123,18 +132,9 @@ def create_or_update_profile():
             profile.interests = interests_objs
         db.session.add(profile)
 
-    if interest_ids:
-        interests_objs = Interest.query.filter(Interest.id.in_(interest_ids)).all()
-
-    if interest_ids is not None:
-        user.profile.interests = interests_objs
-
-
-
-
     db.session.commit()
-
     return jsonify({"message": "Profile saved!"}), 200
+
 #-----------------Profil aufrufen-------------------------------------------------------
 @app.route('/api/profile', methods=['GET'])
 @jwt_required()
@@ -147,6 +147,8 @@ def get_profile():
     return jsonify({
         'name' : user.profile.name,
         'age' : user.profile.age,
+        'city' : user.profile.city,
+        'social_type' : user.profile.social_type,
         'photo' : f"/uploads/{user.profile.photo}",
         "interests" : [{'id':i.id, 'name':i.name} for i in user.profile.interests]
     }),200
