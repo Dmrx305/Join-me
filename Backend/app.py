@@ -74,9 +74,9 @@ def login():
     return jsonify({'error':'Invalid login'}),401
 
 
-#-----------Profil erstellen/ Updaten/ Anzeigen-----------------
+#-----------Profil erstellen/ Updaten/----------------
 
-@app.route('/api/profile', methods=['POST'])
+@app.route('/api/create_or_update_profile', methods=['POST'])
 @jwt_required()
 def create_or_update_profile():
     current_username = get_jwt_identity()
@@ -129,8 +129,8 @@ def create_or_update_profile():
     db.session.commit()
     return jsonify({"message": "Profile saved!"}), 200
 
-#-----------------Profil aufrufen-------------------------------------------------------
-@app.route('/api/profile', methods=['GET'])
+#-----------------Passende User anzeigen-------------------------------------------------------
+@app.route('/api/show_matching_users', methods=['GET'])
 @jwt_required()
 def show_profile():
     current_username = get_jwt_identity()
@@ -188,7 +188,7 @@ def home():
 
 #---------------Profil durch ID anzeigen-----------------------------------------------------
 
-@app.route('/api/profile/<int:user_id>', methods=['GET'])
+@app.route('/api/show_profile/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_other_profile(user_id):
     current_username = get_jwt_identity()
@@ -210,7 +210,7 @@ def get_other_profile(user_id):
     }), 200
 
 #------------------Anfrage senden------------------------------------------------------
-@app.route('/api/contact_request/<int:receiver_id>', methods=['POST'])
+@app.route('/api/send_contact_request/<int:receiver_id>', methods=['POST'])
 @jwt_required()
 def send_contact_request(receiver_id):
     current_username = get_jwt_identity()
@@ -237,7 +237,7 @@ def send_contact_request(receiver_id):
 
 
 #-------------------Anfragen anzeigen------------------------------------------------------
-@app.route('/api/contacts/requests', methods=['GET'])
+@app.route('/api/show_contact_requests', methods=['GET'])
 @jwt_required()
 def get_contact_requests():
     current_username = get_jwt_identity()
@@ -256,7 +256,7 @@ def get_contact_requests():
     return jsonify(results), 200
 
 #-----------------Anfrage annehmen/ablehnen------------------------------------------------------
-@app.route('/api/contacts/respond/<int:request_id>', methods=['POST'])
+@app.route('/api/contact_request_respond/<int:request_id>', methods=['POST'])
 @jwt_required()
 def respond_contact_request(request_id):
     current_username = get_jwt_identity()
@@ -280,7 +280,7 @@ def respond_contact_request(request_id):
     return jsonify({"message": f"Request {action}"}), 200
 
 #------------------Kontakte anzeigen------------------------------------------------------
-@app.route('/api/contacts', methods=['GET'])
+@app.route('/api/show_contacts', methods=['GET'])
 @jwt_required()
 def get_contacts():
     current_username = get_jwt_identity()
@@ -305,7 +305,7 @@ def get_contacts():
     return jsonify(results), 200
 
 #----------------Einladung zur Aktivität senden------------------------------------------------------
-@app.route('/api/activity_invite/<int:receiver_id>', methods=['POST'])
+@app.route('/api/send_activity_invite/<int:receiver_id>', methods=['POST'])
 @jwt_required()
 def send_activity_invite(receiver_id):
     current_username = get_jwt_identity()
@@ -345,7 +345,7 @@ def send_activity_invite(receiver_id):
 
 #----------------Einladungen anzeigen------------------------------------------------------
 
-@app.route('/api/invites', methods=['GET'])
+@app.route('/api/show_received_activity_invites', methods=['GET'])
 @jwt_required()
 def get_invites():
     current_username = get_jwt_identity()
@@ -366,7 +366,7 @@ def get_invites():
 
 #----------------Einladung annehmen/ablehnen------------------------------------------------------
 
-@app.route('/api/invites/respond/<int:invite_id>', methods=['POST'])
+@app.route('/api/respond_to_activity_invites/<int:invite_id>', methods=['POST'])
 @jwt_required()
 def respond_invite(invite_id):
     current_username = get_jwt_identity()
@@ -389,8 +389,8 @@ def respond_invite(invite_id):
     db.session.commit()
     return jsonify({"message": f"Invite {action}"}), 200
 
-#-----------------Alle gesendeten und unbeantworteten Einladungen der Aktivitäten anzeigen----------------------------------
-@app.route('/api/invites/sent', methods=['GET'])
+#-----------------Alle beantworteten Einladungen der Aktivitäten anzeigen----------------------------------
+@app.route('/api/show_sent__activity_invites', methods=['GET'])
 @jwt_required()
 def get_sent_invites():
     current_username = get_jwt_identity()
@@ -417,7 +417,7 @@ def uploaded_file(filename):
 
 
 #----------------Profil löschen-----------------------------------------
-@app.route('/api/profile', methods=['DELETE'])
+@app.route('/api/delete_profile', methods=['DELETE'])
 @jwt_required()
 def delete_profile():
     current_username = get_jwt_identity()
