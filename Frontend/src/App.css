@@ -1,38 +1,108 @@
-.App {
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Cantarell:ital,wght@0,400;0,700;1,400;1,700&family=Just+Another+Hand&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Pacifico&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cantarell:ital,wght@0,400;0,700;1,400;1,700&family=Just+Another+Hand&family=Maven+Pro:wght@400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Pacifico&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+  background-color: #EFEAEB;
+}
+
+.forms {
+  font-family: "Maven Pro";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 15px;
+}
+
+h1 {
+  display: flex;
+  justify-content: center;
+  font-size: 100px;
+  font-family: "Just Another Hand";
+  color: #F28705;
+  text-shadow: 1px 4px 5px  rgb(175, 175, 175);
+}
+
+h2 {
+  font-family: "Maven Pro";
+  font-size: 25px;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  color: #343434;
+}
+
+.highlight {
+  font-family: "Just Another Hand";
+  color: #F28705;
+  font-size: 120%;
+  text-shadow: 1px 4px 4px  rgba(175, 175, 175, 0.805);
+
+}
+
+.username {
+  flex: 0 0 auto;
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+  height: 27px;
+  width: 185px;
+  box-shadow: 1px 4px 10px  rgb(175, 175, 175);
+}
+
+input::placeholder {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+input:focus {
+    outline: none;            
+    border: 2px solid #f2870548; 
+    border-radius: 5px; 
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.password {
+  flex: 0 0 auto;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+  height: 27px;
+  width: 185px;
+  box-shadow: 1px 4px 10px  rgb(175, 175, 175);
+  margin-top: 10px;
 }
 
-.App-link {
-  color: #61dafb;
+.noaccountyet {
+  display: flex;
+  justify-content: center;
+  font-family: "Maven Pro";
+  font-size: 15px;
+  margin-top: 50px;
+  
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.loginbutton {
+  display: flex;
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+  height: 20px;
+  width: 80px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: 1px 4px 10px  rgb(175, 175, 175);
+  margin: auto;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.loginbutton:hover {
+  transform: scale(1.1);
+}
+
+
+.registerlink {
+  text-decoration: underline;
+  cursor: pointer;
 }

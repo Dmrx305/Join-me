@@ -1,42 +1,58 @@
 import { useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
-import Profile from "./Profile";
-
+import ShowMyProfile from "./ShowMyProfile";
+import ShowOtherProfile from "./ShowOtherProfile";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 export default function App() {
-	const [token, setToken] = useState(null);
-	const [showRegister, setShowRegister] = useState(false);
-	const[showProfile, setShowProfile] = useState(false);
+  const [token, setToken] = useState(null);
+  const [showRegister, setShowRegister] = useState(false);
 
-	  if (!token) {
+  // Wenn nicht eingeloggt → Login/Register
+  if (!token) {
     return (
       <div style={{ padding: 20 }}>
         {showRegister ? (
           <>
             <Register onRegisterSuccess={() => setShowRegister(false)} />
-            <p>Already reggistered? <button onClick={() => setShowRegister(false)}>Login</button></p>
+            <p className="noaccountyet">
+              Already registered?{" "}
+              <button onClick={() => setShowRegister(false)}>Login</button>
+            </p>
           </>
         ) : (
           <>
             <Login setToken={setToken} />
-            <p>No Account yet? <button onClick={() => setShowRegister(true)}>Register</button></p>
+            <p className="noaccountyet">
+              No account yet?{" "}
+              <button onClick={() => setShowRegister(true)}>
+                <span className="registerlink">Register</span>
+              </button>
+            </p>
           </>
         )}
       </div>
     );
   }
 
-	return (
-	<div style={{ padding: 20 }}>
-		<button onClick={() => setShowProfile(!showProfile)}>
-		{showProfile ? "back" : "Edit profile"}
-		</button>
-		{showProfile ? (
-		<Profile token={token} />
-		) : (
-		<h2>Welcome!</h2>
-		)}
-	</div>
-)
+  // Eingeloggt → Router
+  return (
+    <Router>
+      <div style={{ padding: 20 }}>
+        <nav style={{ marginBottom: "20px" }}>
+          <Link to="/" style={{ marginRight: "10px" }}>Home</Link>
+          <Link to="/profile" style={{ marginRight: "10px" }}>My Profile</Link>
+        </nav>
+
+        <Routes>
+          <Route path="/" element={<h2>Welcome!</h2>} />
+          {/* Eigene Profil-Seite */}
+          <Route path="/profile" element={<ShowMyProfile token={token} />} />
+          {/* Profil anderer Nutzer */}
+          <Route path="/profile/:userId" element={<ShowOtherProfile token={token} />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }

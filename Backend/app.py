@@ -186,9 +186,30 @@ def home():
     return jsonify(results), 200
 
 
-#---------------Profil durch ID anzeigen-----------------------------------------------------
+#---------------Eigenes Profil anzeigen-----------------------------------------------------
+@app.route('/api/show_my_profile', methods=['GET'])
+@jwt_required()
+def get_my_profile():
+    current_username = get_jwt_identity()
+    current_user = User.query.filter_by(username=current_username).first()
 
-@app.route('/api/show_profile/<int:user_id>', methods=['GET'])
+    if not current_user or not current_user.profile:
+        return jsonify({"error": "Profile not found"}), 404
+    
+    profile = current_user.profile
+
+    return jsonify({
+        "name": profile.name,
+        "age": profile.age,
+        "city": profile.city,
+        "social_type": profile.social_type,
+        "photo": f"/uploads/{profile.photo}" if profile.photo else None,
+        "interests": [{"id": i.id, "name": i.name} for i in profile.interests]
+    }), 200
+
+
+#------------------Profil durch ID anzeigen-----------------------------------------------------
+@app.route('/api/show_other_profile/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_other_profile(user_id):
     current_username = get_jwt_identity()
@@ -442,7 +463,7 @@ def delete_profile():
 @app.route('/api/interests', methods=['GET'])
 def get_interests():
     interests = Interest.query.all()
-    return jsonify([{"id": interests.id, "name": interests.name} for i in interests])
+    return jsonify([{"id": i.id, "name": i.name} for i in interests])
 
 
 if __name__ == '__main__':
