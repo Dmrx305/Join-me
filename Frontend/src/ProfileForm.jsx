@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function ProfileForm({ token, onProfileSaved }) {
+
+export default function ProfileForm() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
@@ -14,7 +15,7 @@ export default function ProfileForm({ token, onProfileSaved }) {
   // Interessen vom Backend laden
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/interests")
+      .get("http://localhost:5000/api/interests", {withCredentials:true})
       .then(res => setInterests(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -36,14 +37,12 @@ export default function ProfileForm({ token, onProfileSaved }) {
     selectedInterests.forEach(id => formData.append("interest_ids", id));
 
     try {
-      await axios.post("http://localhost:5000/api/create_or_update_profile", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+      await axios.post("http://localhost:5000/api/create_or_update_profile", formData,
+         {
+          withCredentials:true,
         }
-      });
+      );
       setMessage("Profile saved!");
-      onProfileSaved(); // Parent kann z.B. Profil neu laden
     } catch (err) {
       console.error(err);
       setMessage("Failed to save profile!");
@@ -51,49 +50,75 @@ export default function ProfileForm({ token, onProfileSaved }) {
   };
 
   return (
-    <div>
-      <h2>Create/Edit Profile</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="Name"
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-        <input
-          placeholder="Age"
-          type="number"
-          value={age}
-          onChange={e => setAge(e.target.value)}
-        />
-        <input
-          placeholder="City"
-          value={city}
-          onChange={e => setCity(e.target.value)}
-        />
+    <div className="flex flex-col justify-center items-center">
 
-        <select
-          value={socialType}
-          onChange={e => setSocialType(e.target.value)}
-        >
-          <option value="extrovert">Extrovert</option>
-          <option value="introvert">Introvert</option>
-        </select>
+      <h1
+        className="text-[#F28705] flex  justify-center [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-7xl pt-10" >Join me!
+      </h1>
 
-        <input type="file" onChange={e => setPhoto(e.target.files[0])} />
+      <h2> Create/Edit Profile </h2>
 
-        <h3>Select Interests</h3>
-        {interests.map(i => (
-          <label key={i.id} style={{ display: "block" }}>
-            <input
-              type="checkbox"
-              checked={selectedInterests.includes(i.id)}
-              onChange={() => handleInterestChange(i.id)}
-            />
-            {i.name}
+      <form className="flex justify-center items-center flex-col gap-2" onSubmit={handleSubmit}>
+
+        
+          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+            placeholder="Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+
+
+          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+            placeholder="Age"
+            type="number"
+            value={age}
+            onChange={e => setAge(e.target.value)}
+          />
+
+
+   
+          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+            placeholder="City"
+            value={city}
+            onChange={e => setCity(e.target.value)}
+          />
+
+
+        <div 
+        className="w-[100px] h-[30px] flex justify-center items-center  bg-white rounded-sm drop-shadow-md">
+          <select
+            value={socialType}
+            onChange={e => setSocialType(e.target.value)}>
+            <option value="extrovert">Extrovert</option>
+            <option value="introvert">Introvert</option>
+          </select>
+        </div>
+
+        <div >
+
+          <label className="x-4 py-2 rounded bg-white drop-shadow-md w-[120px] h-[30px] cursor-pointer flex justify-center items-center">
+            Upload Photo
           </label>
-        ))}
+          <input type="file" className="hidden" onChange={e => setPhoto(e.target.files[0])} />
 
-        <button type="submit">Save Profile</button>
+        </div>
+
+        <div>
+          <h1 className="text-xl">Select Interests</h1>
+
+          {interests.map(i => (
+            <label className="flex justify-center" key={i.id}>
+              <input className="flex"
+                type="checkbox"
+                checked={selectedInterests.includes(i.id)}
+                onChange={() => handleInterestChange(i.id)}
+              />
+              {i.name}
+            </label>
+          ))}
+        </div>
+
+        <button className="w-[100px] h-[30px] flex justify-center items-center bg-white rounded-sm drop-shadow-md" type="submit">Save</button>
       </form>
       {message && <p>{message}</p>}
     </div>

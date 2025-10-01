@@ -10,7 +10,7 @@ from wtforms.validators import input_required, length, ValidationError
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token,jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token,jwt_required, get_jwt_identity, create_refresh_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 from models import db, User, Profile, Interest, ContactRequest, ActivityInvite
 
 app = Flask(__name__)
@@ -20,10 +20,18 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 app.config['UPLOAD_FOLDER']= 'uploads' #Bilder Speicherordner
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+app.config["JWT_COOKIE_SECURE"] = False  # Nur über HTTPS, in Produktion auf True setzen
+app.config["JWT_COOKIE_CSRF_PROTECT"] = False  # CSRF Schutz für Cookies, in Produktion auf True setzen
+app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
+app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
+
+
+
 db.init_app(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-CORS(app)   
+CORS(app, supports_credentials=True) #erlaubt Cookies
 
 @app.before_request
 def create_interests():
@@ -66,14 +74,41 @@ def register():
 @app.route('/api/login',methods =['POST'])
 def login():
     data = request.get_json()
-
     user = User.query.filter_by(username=data['username']).first()
+
     if user and bcrypt.check_password_hash(user.password, data['password']):
         access_token = create_access_token(identity=user.username)
-        return jsonify({'access_token': access_token}),200
-    return jsonify({'error':'Invalid login'}),401
+        refresh_token = create_refresh_token(identity=user.username)
+
+        response = jsonify({
+            'Message':"Login successfully!",
+            'access_token': access_token,})
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+        return response, 200
+    
+    return jsonify({'error':'Invalid login'}), 401
+
+# ------------ Logout (löscht Cookies) ------------
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    resp = jsonify({"msg": "Logout successful"})
+    unset_jwt_cookies(resp)
+    return resp, 200
 
 
+# ------------ Token Refresh ------------
+@app.route('/api/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    current_user = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user)
+
+    resp = jsonify({"msg": "Token refreshed"})
+    set_access_cookies(resp, new_access_token)
+    return resp, 200
+
+    
 #-----------Profil erstellen/ Updaten/----------------
 
 @app.route('/api/create_or_update_profile', methods=['POST'])

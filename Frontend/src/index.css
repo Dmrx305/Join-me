@@ -1,6 +1,11 @@
-/* Global Font*/
+@import url('https://fonts.googleapis.com/css2?family=Just+Another+Hand&family=Maven+Pro:wght@400..900&display=swap');
+@import "tailwindcss";
 
-body {
-    font-family: "Maven Pro";
+@theme {
+  --font-anotherhand: 'Just Another Hand', 'sans-serif'
 }
 
+html {
+    transform: scale(1.1);
+    font-family:"Maven pro";
+}

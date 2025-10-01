@@ -1,58 +1,81 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import ShowMyProfile from "./ShowMyProfile";
-import ShowOtherProfile from "./ShowOtherProfile";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import ProfileForm from "./ProfileForm";
+import { AuthContext, AuthProvider } from "./AuthContext";
 
-export default function App() {
-  const [token, setToken] = useState(null);
+function AppRoutes() {
+  // const [token, setToken] = useState(null);
+  const {token} = useContext(AuthContext);
   const [showRegister, setShowRegister] = useState(false);
 
-  // Wenn nicht eingeloggt → Login/Register
-  if (!token) {
-    return (
-      <div style={{ padding: 20 }}>
-        {showRegister ? (
-          <>
-            <Register onRegisterSuccess={() => setShowRegister(false)} />
-            <p className="noaccountyet">
-              Already registered?{" "}
-              <button onClick={() => setShowRegister(false)}>Login</button>
-            </p>
-          </>
-        ) : (
-          <>
-            <Login setToken={setToken} />
-            <p className="noaccountyet">
-              No account yet?{" "}
-              <button onClick={() => setShowRegister(true)}>
-                <span className="registerlink">Register</span>
-              </button>
-            </p>
-          </>
-        )}
-      </div>
-    );
-  }
-
-  // Eingeloggt → Router
   return (
-    <Router>
-      <div style={{ padding: 20 }}>
-        <nav style={{ marginBottom: "20px" }}>
-          <Link to="/" style={{ marginRight: "10px" }}>Home</Link>
-          <Link to="/profile" style={{ marginRight: "10px" }}>My Profile</Link>
-        </nav>
+      <Routes>
+        {/* Login / Registration */}
+        <Route
+          path="/login"
+          element={
+            token ? (
+              <Navigate to="/show_my_profile" />
+            ) : showRegister ? (
+              <>
+                <Register onRegisterSuccess={() => setShowRegister(false)} />
+                  <div className="pt-2 text-sm">
+                <p          
+                  className="flex justify-center">
+                  Already registered?{" "}
+                  <button 
+                  className="pl-1 pt- underline cursor-pointer"
+                  onClick={() => setShowRegister(false)}
+                  >Login</button>
+                </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <Login/>
 
-        <Routes>
-          <Route path="/" element={<h2>Welcome!</h2>} />
-          {/* Eigene Profil-Seite */}
-          <Route path="/profile" element={<ShowMyProfile token={token} />} />
-          {/* Profil anderer Nutzer */}
-          <Route path="/profile/:userId" element={<ShowOtherProfile token={token} />} />
-        </Routes>
-      </div>
-    </Router>
+                <div className="pt-2 text-sm">
+                  <p
+                    className="flex justify-center">
+                    No account yet?{" "}
+                    <button
+                      className="pl-1 pt- underline cursor-pointer" onClick={() => setShowRegister(true)}
+                    >Register
+                    </button>
+                  </p>
+                </div>
+              </>
+            )
+          }
+        />
+
+        {/* Eigene Profil-Seite */}
+        <Route
+          path="/show_my_profile"
+          element={token ? <ShowMyProfile /> : <Navigate to="/login" />}
+        />
+
+        {/* Profil bearbeiten */}
+        <Route
+          path="/create_or_update_profile"
+          element={token ? <ProfileForm /> : <Navigate to="/login" />}
+        />
+
+        {/* Startseite */}
+        <Route path="/" element={<Navigate to="/login" />} />
+      </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
   );
 }

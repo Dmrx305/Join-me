@@ -2,16 +2,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
-export default function ShowOtherProfile({ token }) {
+export default function ShowOtherProfile() {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/show_other_profile/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+    axios.get(`http://localhost:5000/api/show_other_profile/${userId}`, {
+        withCredentials: true
       })
       .then(res => setProfileData(res.data))
       .catch(err => setError("Profile not found"));
