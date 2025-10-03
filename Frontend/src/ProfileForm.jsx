@@ -50,25 +50,21 @@ export default function ProfileForm() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center">
+<>      
+      <p className="text-3xl" > Create/Edit Profile </p>
 
-      <h1
-        className="text-[#F28705] flex  justify-center [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-7xl pt-10" >Join me!
-      </h1>
-
-      <h2> Create/Edit Profile </h2>
-
-      <form className="flex justify-center items-center flex-col gap-2" onSubmit={handleSubmit}>
+      <div className>
+      <form className="flex justify-center items-center flex-col space-y-2" onSubmit={handleSubmit}>
 
         
-          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+          <input className="w-[200px] h-[30px] text-center bg-white rounded-sm drop-shadow-md"
             placeholder="Name"
             value={name}
             onChange={e => setName(e.target.value)}
           />
 
 
-          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+          <input className="w-[200px] h-[30px] text-center bg-white rounded-sm drop-shadow-md"
             placeholder="Age"
             type="number"
             value={age}
@@ -77,7 +73,7 @@ export default function ProfileForm() {
 
 
    
-          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+          <input className="w-[200px] h-[30px] text-center bg-white rounded-sm drop-shadow-md"
             placeholder="City"
             value={city}
             onChange={e => setCity(e.target.value)}
@@ -85,7 +81,7 @@ export default function ProfileForm() {
 
 
         <div 
-        className="w-[100px] h-[30px] flex justify-center items-center  bg-white rounded-sm drop-shadow-md">
+        className="w-[100px] h-[30px] items-center  bg-white rounded-sm drop-shadow-md">
           <select
             value={socialType}
             onChange={e => setSocialType(e.target.value)}>
@@ -96,10 +92,10 @@ export default function ProfileForm() {
 
         <div >
 
-          <label className="x-4 py-2 rounded bg-white drop-shadow-md w-[120px] h-[30px] cursor-pointer flex justify-center items-center">
+          <label className="x-4 py-2 rounded bg-white drop-shadow-md w-[120px] h-[30px] cursor-pointer hover:scale-110 flex justify-center items-center">
             Upload Photo
-          </label>
           <input type="file" className="hidden" onChange={e => setPhoto(e.target.files[0])} />
+          </label>
 
         </div>
 
@@ -118,9 +114,10 @@ export default function ProfileForm() {
           ))}
         </div>
 
-        <button className="w-[100px] h-[30px] flex justify-center items-center bg-white rounded-sm drop-shadow-md" type="submit">Save</button>
+        <button className="w-[100px] h-[30px] flex justify-center items-center bg-white rounded-sm hover:scale-110 drop-shadow-md" type="submit">Save</button>
       </form>
+      </div>
       {message && <p>{message}</p>}
-    </div>
+</>
   );
 }

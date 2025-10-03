@@ -29,42 +29,43 @@ export default function ShowMyProfile() {
 
 
   return (
-    <div>
+    <>
       {!profileData ? (
         <ProfileForm onProfileSaved={loadProfile} />
       ) : (
 
         <div className="flex justify-center flex-col items-center">
-          <h1
-            className="text-[#F28705] [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-7xl pt-10" >Join me!
-          </h1>
-
-          <h2 className="pt-5 text-3xl">Your Profile</h2>
+          <p className="pb-5  text-3xl">Your Profile</p>
          
-          <section className="profileData">
+          <section className="flex flex-row">
+            <div className="">
 
-            <p><strong>Name:</strong> {profileData.name}</p>
-            <p><strong>Age:</strong> {profileData.age}</p>
-            <p><strong>City:</strong> {profileData.city}</p>
-            <p><strong>Social Type:</strong> {profileData.social_type}</p>
+            <p>Name:{profileData.name}</p>
+            <p>Age: {profileData.age}</p>
+            <p>City: {profileData.city}</p>
+            <p>Social Type: {profileData.social_type}</p>
+             {profileData.interests && profileData.interests.length > 0 && (
+              <p>Interests: {profileData.interests.map(i => i.name).join(", ")}</p>
+            )}
+            </div>
+
             {profileData.photo && (
-              <img className="border-2 w-[50px] h-[70px]"
+              <div className="flex">
+              <img className="border-2 w-[100px] h-[120px] rounded "
                 src={`http://localhost:5000${profileData.photo}`}
                 alt="Profile"
                 />
+            </div>
             )}
-            {profileData.interests && profileData.interests.length > 0 && (
-              <p><strong>Interests:</strong> {profileData.interests.map(i => i.name).join(", ")}</p>
-            )}
+           
 
           </section>
-          <LogoutButton/>
-          <nav className="pt-2">
-          <Link className="bg-white w-[100px] h-[25px] flex items-center justify-center rounded-sm  text-sm drop-shadow-md cursor-pointer" to="/create_or_update_profile">Update Profile</Link>
-          </nav>
+
+          <Link className="bg-white w-[100px] h-[25px] flex items-center justify-center rounded-sm  text-sm drop-shadow-md cursor-pointer" to="/create_or_update_profile"
+          >Update Profile</Link>
 
         </div>
       )}
-    </div>
+</>
   );
 }

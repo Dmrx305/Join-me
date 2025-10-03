@@ -5,15 +5,14 @@ import Register from "./Register";
 import ShowMyProfile from "./ShowMyProfile";
 import ProfileForm from "./ProfileForm";
 import { AuthContext, AuthProvider } from "./AuthContext";
+import NavBar from "./NavBar"
 
 function AppRoutes() {
-  // const [token, setToken] = useState(null);
   const {token} = useContext(AuthContext);
   const [showRegister, setShowRegister] = useState(false);
 
   return (
       <Routes>
-        {/* Login / Registration */}
         <Route
           path="/login"
           element={
@@ -51,6 +50,7 @@ function AppRoutes() {
             )
           }
         />
+        
 
         {/* Eigene Profil-Seite */}
         <Route
@@ -70,11 +70,23 @@ function AppRoutes() {
   );
 }
 
+function AppContent() {
+  const { token } = useContext(AuthContext);
+
+  return (
+<div className="className=flex flex-col min-h-screen">
+      {token && <NavBar />} 
+      <AppRoutes />
+      </div>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <Router>
-        <AppRoutes />
+         <AppContent/>
+      
       </Router>
     </AuthProvider>
   );
