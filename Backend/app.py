@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import os
 from datetime import timedelta
 from werkzeug.utils import secure_filename
@@ -13,20 +14,23 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token,jwt_required, get_jwt_identity, create_refresh_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 from models import db, User, Profile, Interest, ContactRequest, ActivityInvite
 
+load_dotenv()
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SECRET_KEY']= 'your_secret_key'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
-app.config['UPLOAD_FOLDER']= 'uploads' #Bilder Speicherordner
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(
+    seconds=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 3600))
+)
+app.config['JWT_TOKEN_LOCATION'] = [os.getenv('JWT_TOKEN_LOCATION', 'cookies')]
+app.config['JWT_COOKIE_SECURE'] = os.getenv('JWT_COOKIE_SECURE', 'False').lower() == 'true'
+app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('JWT_COOKIE_CSRF_PROTECT', 'False').lower() == 'true'
+app.config['JWT_ACCESS_COOKIE_NAME'] = os.getenv('JWT_ACCESS_COOKIE_NAME', 'access_token_cookie')
+app.config['JWT_REFRESH_COOKIE_NAME'] = os.getenv('JWT_REFRESH_COOKIE_NAME', 'refresh_token_cookie')
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-app.config["JWT_COOKIE_SECURE"] = False  # Nur über HTTPS, in Produktion auf True setzen
-app.config["JWT_COOKIE_CSRF_PROTECT"] = False  # CSRF Schutz für Cookies, in Produktion auf True setzen
-app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
-app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
-
-
 
 db.init_app(app)
 bcrypt = Bcrypt(app)
@@ -167,38 +171,35 @@ def create_or_update_profile():
 #-----------------Passende User anzeigen-------------------------------------------------------
 @app.route('/api/show_matching_users', methods=['GET'])
 @jwt_required()
-def show_profile():
-    current_username = get_jwt_identity()
-    user = User.query.filter_by(username=current_username).first()
-    if not user.profile:
-        return jsonify({"Error":"profile does not exist"}), 404
-    
-    return jsonify({
-        'name' : user.profile.name,
-        'age' : user.profile.age,
-        'city' : user.profile.city,
-        'social_type' : user.profile.social_type,
-        'photo' : f"/uploads/{user.profile.photo}",
-        "interests" : [{'id':i.id, 'name':i.name} for i in user.profile.interests]
-    }),200
+# def show_matching_users():
+#     current_username = get_jwt_identity()
+#     user = User.query.filter_by(username=current_username).first()
 
-def home():
+#     if not user.profile:
+#         return jsonify({"Error":"profile does not exist"}), 404
+    
+#     return jsonify({
+#         'name' : user.profile.name,
+#         'age' : user.profile.age,
+#         'city' : user.profile.city,
+#         'social_type' : user.profile.social_type,
+#         'photo' : f"/uploads/{user.profile.photo}",
+#         "interests" : [{'id':i.id, 'name':i.name} for i in user.profile.interests]
+#     }),200
+
+def matching_users():
     current_username = get_jwt_identity()
     user = User.query.filter_by(username=current_username).first()
 
     if not user or not user.profile:
         return jsonify({"error": "User has no profile yet"}), 404
     
-    #Stadt des aktuellen Users
     city = user.profile.city
-
-    #Interessen des aktuellen Users
     user_interest_ids = [i.id for i in user.profile.interests]
 
     if not city or not user_interest_ids:
         return jsonify({"error": "User profile incomplete (city or interests missing)"}), 400
     
-    #Matching Users aber nicht der selbe User
     matching_users = Profile.query.filter(
         Profile.city == city,
         Profile.user_id != user.id
@@ -446,7 +447,7 @@ def respond_invite(invite_id):
     return jsonify({"message": f"Invite {action}"}), 200
 
 #-----------------Alle beantworteten Einladungen der Aktivitäten anzeigen----------------------------------
-@app.route('/api/show_sent__activity_invites', methods=['GET'])
+@app.route('/api/show_sent_activity_invites', methods=['GET'])
 @jwt_required()
 def get_sent_invites():
     current_username = get_jwt_identity()
@@ -465,11 +466,66 @@ def get_sent_invites():
 
     return jsonify(results), 200
 
+#----------------Activity History-----------------------------------------
+@app.route('/api/show_accepted_activities', methods=['GET'])
+@jwt_required()
+def show_accepted_activities():
+    current_username = get_jwt_identity()
+    user = User.query.filter_by(username=current_username).first()
+
+    invites = ActivityInvite.query.filter(
+        ((ActivityInvite.sender_id == user.id) | (ActivityInvite.receiver_id == user.id)),
+        ActivityInvite.status == "accepted"
+    ).all()
+
+    results = []
+    for inv in invites:
+        # Partner herausfinden
+        if inv.sender_id == user.id:
+            partner = User.query.get(inv.receiver_id)
+            role = "host"
+        else:
+            partner = User.query.get(inv.sender_id)
+            role = "guest"
+
+        results.append({
+            "activity": inv.activity,
+            "date": inv.date,
+            "partner": partner.username,
+            "role": role
+        })
+
+    return jsonify(results), 200
+
 
 #----------Route zum abrufen der Bilder---------------------------------------
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return app.send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+#-----------Foto löschen----------------------------------------
+@app.route("/api/delete_profile_photo", methods=["DELETE"])
+@jwt_required()
+def delete_profile_photo():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user or not user.photo:
+        return jsonify({"error": "No photo to delete"}), 400
+
+    # Pfad zur Datei ermitteln
+    photo_path = os.path.join(app.config["UPLOAD_FOLDER"], user.photo)
+
+    # Datei löschen (wenn vorhanden)
+    if os.path.exists(photo_path):
+        os.remove(photo_path)
+
+    # Datenbank aktualisieren
+    user.photo = None
+    db.session.commit()
+
+    return jsonify({"message": "Profile photo deleted"}), 200
 
 
 #----------------Profil löschen-----------------------------------------

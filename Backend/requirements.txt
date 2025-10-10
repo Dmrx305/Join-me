@@ -8,3 +8,4 @@ Flask-Cors
 Flask-JWT-Extended
 Werkzeug
 gunicorn
+python-dotenv
