@@ -11,7 +11,7 @@ If a match is found, users will be notified and can look up the other users prof
 If both users accept, the match is confirmed and Users can then notify each other when they are going on an activity.
 
 # What is the App NOT for?
-Join me is not meant for any kinda of dating, chatting similar.
+Join me is not meant for any kind of dating, chatting similar.
 The focus is on Joining each others activities, with the goal of the users to just benefit and enjoy the company of each other!
 
 

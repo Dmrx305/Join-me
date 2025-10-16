@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import api from "./Axios";
 
 
 export default function Register({ onRegisterSuccess }) {
@@ -10,12 +11,11 @@ export default function Register({ onRegisterSuccess }) {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/register",
+      const res = await api.post("/register",
         { username, password },
         { 
-          headers: { "Content-Type": "application/json" },
-        withCredentials: true }
+          headers: { "Content-Type": "application/json" }
+        }
       );
 
       setMessage(res.data.message || "Registration successful!");
@@ -38,7 +38,7 @@ export default function Register({ onRegisterSuccess }) {
         <span className="text-[#F28705] [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-3xl pl-1 pr-1"
         >YOU</span> can join {" "}
         <span className="text-[#F28705] [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-3xl pl-1 pr-1"
-        >ME</span>!
+        >ME</span>
       </h2>
 
       <form className="space-y-2 flex justify-center flex-col items-center" onSubmit={handleRegister}>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./index.css";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import api from "./Axios";
 
 export default function Login() {
   const {login} = useContext(AuthContext);
@@ -15,13 +16,9 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/login",
+      const res = await api.post("/login",
         { username, password },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true, // cookies erlauben
-        }
+        {headers: { "Content-Type": "application/json" }}
       );
 
       if (res.status === 200) {
@@ -40,27 +37,27 @@ export default function Login() {
     <div
       className="flex justify-center flex-col items-center">
 
-      <h1
-        className="text-[#F28705] [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-5xl pt-10" >Join me!
-      </h1>
+      <h3
+        className="text-[#F28705] [text-shadow:2px_4px_4px_rgba(0,0,0,0.2)] font-anotherhand text-6xl mb-5 pt-10" >Join me!
+      </h3>
 
-      <h2 className=" text-xl">
+      <h2 className=" text-xl mb-4">
         The App where
-        <span className="text-[#F28705] [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-3xl pl-1 pr-1"
+        <span className="text-[#F28705] [text-shadow:2px_4px_4px_rgba(0,0,0,0.2)] font-anotherhand text-3xl pl-1 pr-1"
         >YOU</span> can join {" "}
-        <span className="text-[#F28705] [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-3xl pl-1 pr-1"
+        <span className="text-[#F28705] [text-shadow:2px_4px_4px_rgba(0,0,0,0.2)] font-anotherhand text-3xl pl-1 pr-1"
         >ME</span>
       </h2>
 
       <form className="space-y-2 flex justify-center flex-col items-center" onSubmit={handleLogin}>
 
-        <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+        <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md focus-within:outline-[#F28705]"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
         />
 
-        <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+        <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md focus-within:outline-[#F28705]"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -68,7 +65,7 @@ export default function Login() {
         />
 
 
-        <button className="bg-white w-[100px] h-[25px] flex items-center justify-center rounded-sm  drop-shadow-md cursor-pointer" type="submit">
+        <button className="bg-[#F28705] text-white hover:scale-105 w-[100px] h-[25px] flex items-center justify-center rounded-sm drop-shadow-md cursor-pointer" type="submit">
           Login
         </button>
 

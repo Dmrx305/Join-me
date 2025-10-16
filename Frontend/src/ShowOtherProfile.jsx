@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import api from "./Axios";
 
 export default function ShowOtherProfile() {
   const { userId } = useParams();
@@ -9,12 +10,10 @@ export default function ShowOtherProfile() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/show_other_profile/${userId}`, {
-        withCredentials: true
-      })
+    api.get(`/show_other_profile/${userId}`)
       .then(res => setProfileData(res.data))
       .catch(err => setError("Profile not found"));
-  }, [userId, token]);
+  }, [userId]);
 
   if (error) {
     return <p>{error}</p>;
@@ -23,22 +22,37 @@ export default function ShowOtherProfile() {
   if (!profileData) return <p>Loading...</p>;
 
   return (
-    <div>
-      <button onClick={() => navigate(-1)}>Back</button>
-      <h2>{profileData.name}'s Profile</h2>
-      <p><strong>Age:</strong> {profileData.age}</p>
-      <p><strong>City:</strong> {profileData.city}</p>
-      <p><strong>Social Type:</strong> {profileData.social_type}</p>
+    <div className="flex justify-center text-xl">  
+            
+      <div className="flex justify-center flex-col items-center">
+
+      <section className="flex items-center mb-5">
+      <div className="flex flex-col items-center">
+      <p>Hi my name is {profileData.name}</p>
+      <p>And I am {profileData.age} years old.</p>
+      <p>I live near {profileData.city}</p>
+      <p>and I am {profileData.social_type}.</p>
+      </div>
+      
+
+      
       {profileData.photo && (
-        <img
+        <div className="flex m-2">
+        <img className="border-none w-[100px] h-[120px] rounded shadow-md"
           src={`http://localhost:5000${profileData.photo}`}
           alt="Profile"
-          style={{ width: "150px", borderRadius: "10px" }}
-        />
+          />
+      </div>
       )}
+      </section>
+
+           
       {profileData.interests && profileData.interests.length > 0 && (
-        <p><strong>Interests:</strong> {profileData.interests.map(i => i.name).join(", ")}</p>
+        <p>I am interested in {profileData.interests.map(i => i.name).join(", ")}.</p>
       )}
-    </div>
+      <p>Let my know, if I can join your activities!</p>
+      <button  onClick={() => navigate(-1)} className="bg-white w-[100px] h-[25px] flex items-center justify-center rounded-sm mt-3 text-sm drop-shadow-md cursor-pointer hover:scale-110" to="/create_or_update_profile">Back</button>
+      </div> 
+      </div>
   );
 }

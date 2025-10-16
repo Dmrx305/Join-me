@@ -6,6 +6,13 @@ import ShowMyProfile from "./ShowMyProfile";
 import ProfileForm from "./ProfileForm";
 import { AuthContext, AuthProvider } from "./AuthContext";
 import NavBar from "./NavBar"
+import MatchingUsers from "./MatchingUsers";
+import Contacts from "./Contacts"
+import ShowOtherProfile from "./ShowOtherProfile";
+import Requests from "./Requests";
+import ActivityHistory from "./ActivityHistory";
+
+
 
 function AppRoutes() {
   const {token} = useContext(AuthContext);
@@ -65,7 +72,38 @@ function AppRoutes() {
         />
 
         {/* Startseite */}
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/login" />}
+         />
+
+        {/* Matches */}
+        <Route 
+          path="/matching_users"
+          element={token? <MatchingUsers /> : <Navigate to="/login" />}
+        />
+
+        {/* Anfragen */}
+        <Route 
+          path="/contact_requests"
+          element={token? <Requests /> : <Navigate to="/login" />}
+        />
+
+        {/* Kontakte */}
+        <Route 
+          path="/contacts"
+          element={token? <Contacts /> : <Navigate to="/login" />}
+        />
+
+         {/* Andere User Profile */}
+        <Route 
+          path="/other_profile/:userId"
+          element={token? <ShowOtherProfile /> : <Navigate to="/login" />}
+        />
+
+        {/* Activity History*/}
+        <Route 
+          path="/activity_history"
+          element={token? <ActivityHistory /> : <Navigate to="/login" />}
+        />
       </Routes>
   );
 }
@@ -74,7 +112,7 @@ function AppContent() {
   const { token } = useContext(AuthContext);
 
   return (
-<div className="className=flex flex-col min-h-screen">
+<div> 
       {token && <NavBar />} 
       <AppRoutes />
       </div>

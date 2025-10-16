@@ -37,24 +37,26 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 CORS(app, supports_credentials=True) #erlaubt Cookies
 
-@app.before_request
-def create_interests():
-    db.create_all()
-    if Interest.query.count() == 0:
-        db.session.add_all([
-            Interest(name="Hiking"),
-            Interest(name="Squash"),
-            Interest(name="Bouldern"),
-            Interest(name="Swimming"),
-            Interest(name="Cinema"),
-            Interest(name="Bar hopping"),
-            Interest(name="Sight seeing"),
-            Interest(name="Fitness"),
-            Interest(name="Ride a bike"),
-            Interest(name="Barbecue"),    
-        ])
-        db.session.commit()
+# @app.before_request
+# def create_tables():
+#     db.create_all()
 
+# def create_interests():
+#     db.create_all()
+#     if Interest.query.count() == 0:
+#         db.session.add_all([
+#             Interest(name="Hiking"),
+#             Interest(name="Squash"),
+#             Interest(name="Bouldern"),
+#             Interest(name="Swimming"),
+#             Interest(name="Cinema"),
+#             Interest(name="Bar hopping"),
+#             Interest(name="Sight seeing"),
+#             Interest(name="Fitness"),
+#             Interest(name="Ride a bike"),
+#             Interest(name="Barbecue"),    
+#         ])
+#         db.session.commit()
 
 #------------Registrieren---------------------------------------
 
@@ -78,6 +80,7 @@ def register():
 @app.route('/api/login',methods =['POST'])
 def login():
     data = request.get_json()
+    print(data)
     user = User.query.filter_by(username=data['username']).first()
 
     if user and bcrypt.check_password_hash(user.password, data['password']):
@@ -529,26 +532,20 @@ def delete_profile_photo():
 
 
 #----------------Profil löschen-----------------------------------------
-@app.route('/api/delete_profile', methods=['DELETE'])
+@app.route('/api/delete_user', methods=['DELETE'])
 @jwt_required()
-def delete_profile():
+def delete_user():
     current_username = get_jwt_identity()
     user = User.query.filter_by(username=current_username).first()
 
-    if not user or not user.profile:
-        return jsonify({'error': 'Profile not found!'}), 404
-
-    # Falls ein Foto existiert → Datei löschen
-    if user.profile.photo:
-        photo_path = os.path.join(app.config['UPLOAD_FOLDER'], user.profile.photo)
-        if os.path.exists(photo_path):
-            os.remove(photo_path)
+    if not user:
+        return jsonify({'error': 'User not found!'}), 404
 
     # Profil aus der DB löschen
-    db.session.delete(user.profile)
+    db.session.delete(user)
     db.session.commit()
 
-    return jsonify({'message': 'Profile deleted'}), 200
+    return jsonify({'message': 'User deleted'}), 200
 #-------------------------------------------------------------------
 
 @app.route('/api/interests', methods=['GET'])
@@ -558,4 +555,6 @@ def get_interests():
 
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
