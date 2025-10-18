@@ -36,7 +36,7 @@ export default function ShowMyProfile() {
         <ProfileForm onProfileSaved={loadProfile} />
       ) : (
         <div className="flex justify-center flex-col items-center divide-y divide-gray-400">
-          <p className="pb-5 text-2xl">Your Profile</p>
+          <p className="pb-5 text-2xl font-medium">Your Profile</p>
 
           <section className="flex flex-row gap-6 mb-3">
             <div className="mb-4 mt-4">

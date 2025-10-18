@@ -11,6 +11,7 @@ import Contacts from "./Contacts"
 import ShowOtherProfile from "./ShowOtherProfile";
 import Requests from "./Requests";
 import ActivityHistory from "./ActivityHistory";
+import DeleteProfile from "./DeleteProfile";
 
 
 
@@ -33,7 +34,7 @@ function AppRoutes() {
                   className="flex justify-center">
                   Already registered?{" "}
                   <button 
-                  className="pl-1 pt- underline cursor-pointer"
+                  className="pl-1 underline cursor-pointer hover:scale-110"
                   onClick={() => setShowRegister(false)}
                   >Login</button>
                 </p>
@@ -48,7 +49,7 @@ function AppRoutes() {
                     className="flex justify-center">
                     No account yet?{" "}
                     <button
-                      className="pl-1 pt- underline cursor-pointer" onClick={() => setShowRegister(true)}
+                      className="pl-1 underline cursor-pointer hover:scale-105" onClick={() => setShowRegister(true)}
                     >Register
                     </button>
                   </p>
@@ -103,6 +104,12 @@ function AppRoutes() {
         <Route 
           path="/activity_history"
           element={token? <ActivityHistory /> : <Navigate to="/login" />}
+        />
+
+        {/* Delete User*/}
+        <Route 
+          path="/delete_user"
+          element={token? <DeleteProfile /> : <Navigate to="/login" />}
         />
       </Routes>
   );

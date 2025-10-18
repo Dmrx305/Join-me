@@ -51,13 +51,12 @@ export default function Login() {
 
       <form className="space-y-2 flex justify-center flex-col items-center" onSubmit={handleLogin}>
 
-        <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md focus-within:outline-[#F28705]"
-          value={username}
+        <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-lg  drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
         />
 
-        <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md focus-within:outline-[#F28705]"
+        <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-lg  drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -65,7 +64,7 @@ export default function Login() {
         />
 
 
-        <button className="bg-[#F28705] text-white hover:scale-105 w-[100px] h-[25px] flex items-center justify-center rounded-sm drop-shadow-md cursor-pointer" type="submit">
+        <button className="bg-[#F28705] text-white hover:scale-105 w-[100px] h-[25px] flex items-center justify-center rounded-lg drop-shadow-md cursor-pointer transition" type="submit">
           Login
         </button>
 

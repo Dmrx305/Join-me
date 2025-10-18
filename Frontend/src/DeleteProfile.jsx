@@ -14,7 +14,6 @@ export default function DeleteProfile() {
        try {
          const res = await api.delete("/delete_user");
          setMessage(res.data.message || "User deleted");
-
          setTimeout(() => navigate("/login"), 1000);}
 
          catch(err) {

@@ -29,11 +29,11 @@ export default function Register({ onRegisterSuccess }) {
     <div
       className="flex justify-center flex-col items-center">
 
-      <h1
-        className="text-[#F28705] [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-5xl pt-10" >Join me!
-      </h1>
+      <h3
+        className="text-[#F28705] [text-shadow:2px_4px_4px_rgba(0,0,0,0.2)] font-anotherhand text-6xl mb-5 pt-10" >Join me!
+      </h3>
 
-      <h2 className=" text-xl">
+      <h2 className=" text-xl mb-4">
         The App where
         <span className="text-[#F28705] [text-shadow:2px_2px_4px_rgba(0,0,0,0.2)] font-anotherhand text-3xl pl-1 pr-1"
         >YOU</span> can join {" "}
@@ -41,9 +41,9 @@ export default function Register({ onRegisterSuccess }) {
         >ME</span>
       </h2>
 
-      <form className="space-y-2 flex justify-center flex-col items-center" onSubmit={handleRegister}>
+      <form className="space-y-2 flex justify-center flex-col items-center"  onSubmit={handleRegister}>
         
-          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-lg  drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
@@ -51,7 +51,7 @@ export default function Register({ onRegisterSuccess }) {
 
 
 
-          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-sm drop-shadow-md"
+          <input className="w-[200px] h-[30px] flex justify-center text-center bg-white rounded-lg  drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -59,7 +59,7 @@ export default function Register({ onRegisterSuccess }) {
           />
 
 
-        <button className="bg-white w-[100px] h-[25px] flex items-center justify-center rounded-sm  drop-shadow-md cursor-pointer" type="submit">
+        <button className="bg-[#F28705] text-white hover:scale-105 w-[100px] h-[25px] flex items-center justify-center rounded-lg drop-shadow-md cursor-pointer transition" type="submit">
           Register
         </button>
       </form>
