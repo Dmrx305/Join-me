@@ -12,6 +12,7 @@ import ShowOtherProfile from "./ShowOtherProfile";
 import Requests from "./Requests";
 import ActivityHistory from "./ActivityHistory";
 import DeleteProfile from "./DeleteProfile";
+import UploadPhoto from "./UploadPhoto";
 
 
 
@@ -111,7 +112,21 @@ function AppRoutes() {
           path="/delete_user"
           element={token? <DeleteProfile /> : <Navigate to="/login" />}
         />
+
+         {/* Upload Photo*/}
+        <Route 
+          path="/upload_photo"
+          element={token? <UploadPhoto /> : <Navigate to="/login" />}
+        />
+
+
+
+
+
       </Routes>
+
+
+
   );
 }
 

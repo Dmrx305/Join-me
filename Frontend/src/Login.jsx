@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
 import { useContext } from "react";
@@ -38,10 +37,11 @@ export default function Login() {
       className="flex justify-center flex-col items-center">
 
       <h3
-        className="text-[#F28705] [text-shadow:2px_4px_4px_rgba(0,0,0,0.2)] font-anotherhand text-6xl mb-5 pt-10" >Join me!
+        className="text-[#F28705] [text-shadow:2px_4px_4px_rgba(0,0,0,0.2)] font-anotherhand text-6xl mb-5 pt-10" >
+        Join me!
       </h3>
 
-      <h2 className=" text-xl mb-4">
+      <h2 className="text-xl mb-4">
         The App where
         <span className="text-[#F28705] [text-shadow:2px_4px_4px_rgba(0,0,0,0.2)] font-anotherhand text-3xl pl-1 pr-1"
         >YOU</span> can join {" "}

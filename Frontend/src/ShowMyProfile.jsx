@@ -1,80 +1,35 @@
-import { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import ProfileForm from "./ProfileForm";
+import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import { Link } from "react-router-dom";
-import api from "./Axios";
 import DeleteProfile from "./DeleteProfile";
 
 export default function ShowMyProfile() {
-  const { token } = useContext(AuthContext);
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user } = useContext(AuthContext);
 
-  const loadProfile = async () => {
-    try {
-      const res = await api.get("/show_my_profile", {
-        headers: { Authorization: `Bearer ${token}`},
-      });
-      setProfileData(res.data);
-    } catch {
-      setProfileData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadProfile();
-  }, []);
+  if (!user) return <p className="text-center text-xl">Loading profile...</p>;
 
   return (
-    <div className="flex justify-center">
-      {loading ? (
-        <p className="flex justify-center text-2xl">Loading Profile...</p>
-      ) : !profileData ? (
-        <ProfileForm onProfileSaved={loadProfile} />
-      ) : (
-        <div className="flex justify-center flex-col items-center divide-y divide-gray-400">
-          <p className="pb-5 text-2xl font-medium">Your Profile</p>
+    <div className="flex justify-center mt-5">
+      <div className="bg-white shadow-md p-5 rounded-xl w-1/3 text-center">
+        <h2 className="text-2xl font-medium mb-4">Your Profile</h2>
 
-          <section className="flex flex-row gap-6 mb-3">
-            <div className="mb-4 mt-4">
-              <p>Name: {profileData.name}</p>
-              <p>Age: {profileData.age}</p>
-              <p>City: {profileData.city}</p>
-              <p>Social Type: {profileData.social_type}</p>
-              {profileData.interests && profileData.interests.length > 0 && (
-                <p>
-                  Interests:{" "}
-                  {profileData.interests.map((i) => i.name).join(", ")}
-                </p>
-              )}
-            </div>
+        {user.photo ? (
+          <img className="w-24 h-32 object-fill rounded-xl border-none mx-auto mb-3 shadow-md" src={user.photo} alt="Profile"/>
+        ) : (
+          <div className="w-24 h-32 bg-gray-500 flex items-center justify-center mx-auto mb-3">No Photo</div>
+        )}
 
-            {profileData.photo ? (
-              <img
-                className="border-1 w-[80px] h-[100px] rounded"
-                src={`http://localhost:5000${profileData.photo}`}
-                alt="Profile"
-              />
-            ) : (
-              <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mt-5 drop-shadow-sm">
-                <span>No Photo</span>
-              </div>
-            )}
-          </section>
-          <div className="flex gap-5 items-center ">
-          <DeleteProfile/>
-          <Link
-            className="bg-white items-center rounded-sm p-1 text-sm drop-shadow-md hover:scale-110 cursor-pointer"
-            to="/create_or_update_profile"
-          >
-            Update Profile
-          </Link>
-          </div>
+        <p><strong>Name:</strong> {user.name}</p>
+        <p><strong>Age:</strong> {user.age}</p>
+        <p><strong>City:</strong> {user.city}</p>
+        <p><strong>Social Type:</strong> {user.social_type}</p>
+        <p><strong>Interests:</strong> {user.interests.map(i => i.name).join(", ")}</p>
+
+        <div className="flex justify-center gap-3 mt-4">
+          <DeleteProfile />
+          <Link className="bg-white drop-shadow-md p-1 text-sm rounded-sm hover:scale-105 hover:bg-[#FFCA7B] cursor-pointer transition" to="/create_or_update_profile">Edit Profile</Link>
         </div>
-      )}
+      </div>
     </div>
   );
 }

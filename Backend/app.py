@@ -13,6 +13,10 @@ from datetime import timedelta
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token,jwt_required, get_jwt_identity, create_refresh_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 from models import db, User, Profile, Interest, ContactRequest, ActivityInvite
+from imagekitio import ImageKit
+from imagekitio.models.UploadFileRequestOptions import UploadFileRequestOptions
+import base64
+
 
 load_dotenv()
 
@@ -30,12 +34,17 @@ app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('JWT_COOKIE_CSRF_PROTECT', 'Fa
 app.config['JWT_ACCESS_COOKIE_NAME'] = os.getenv('JWT_ACCESS_COOKIE_NAME', 'access_token_cookie')
 app.config['JWT_REFRESH_COOKIE_NAME'] = os.getenv('JWT_REFRESH_COOKIE_NAME', 'refresh_token_cookie')
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'uploads')
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+imagekit = ImageKit(
+    private_key=os.getenv('IMAGEKIT_PRIVATE_KEY'),
+    public_key=os.getenv('IMAGEKIT_PUBLIC_KEY'),
+    url_endpoint=os.getenv('IMAGEKIT_URL_ENDPOINT')
+)
 
 db.init_app(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-CORS(app, supports_credentials=True) #erlaubt Cookies
+CORS(app, supports_credentials=True,origins=["http://localhost:5173"]) #erlaubt Cookies
 
 # @app.before_request
 # def create_tables():
@@ -69,7 +78,7 @@ def register():
     
     hashed = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     user = User(username=data['username'],password=hashed)
-    db.session.add(user)
+    db.session.add(user) 
     db.session.commit()
 
     return jsonify({'message':'Registration successfully!'}), 201
@@ -128,7 +137,6 @@ def create_or_update_profile():
     age = request.form.get('age')
     city = request.form.get('city')
     social_type = request.form.get('social_type') 
-    photo = request.files.get('photo')
     interest_ids = request.form.getlist('interest_ids')
 
     interests_objs =[]
@@ -136,21 +144,12 @@ def create_or_update_profile():
         interests_objs = Interest.query.filter(Interest.id.in_(interest_ids)).all()
 
 
-    photo_filename = None
-    if photo:
-        filename = secure_filename(photo.filename)
-        photo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        photo.save(photo_path)
-        photo_filename = filename
-
     if user.profile:
         #profil updaten
         user.profile.name = name
         user.profile.age = age
         user.profile.city = city
         user.profile.social_type = social_type
-        if photo_filename:
-            user.profile.photo = photo_filename
         if interests_objs:
             user.profile.interests = interests_objs
     
@@ -161,7 +160,6 @@ def create_or_update_profile():
             age=age,
             city=city,
             social_type=social_type,
-            photo=photo_filename,
             user=user,
             )
         if interests_objs:
@@ -169,27 +167,14 @@ def create_or_update_profile():
         db.session.add(profile)
 
     db.session.commit()
-    return jsonify({"message": "Profile saved!"}), 200
+    db.session.refresh(user) 
+    return jsonify({
+        "message": "Profile saved!",
+        "redirect": "/show_my_profile",}), 200
 
 #-----------------Passende User anzeigen-------------------------------------------------------
 @app.route('/api/show_matching_users', methods=['GET'])
 @jwt_required()
-# def show_matching_users():
-#     current_username = get_jwt_identity()
-#     user = User.query.filter_by(username=current_username).first()
-
-#     if not user.profile:
-#         return jsonify({"Error":"profile does not exist"}), 404
-    
-#     return jsonify({
-#         'name' : user.profile.name,
-#         'age' : user.profile.age,
-#         'city' : user.profile.city,
-#         'social_type' : user.profile.social_type,
-#         'photo' : f"/uploads/{user.profile.photo}",
-#         "interests" : [{'id':i.id, 'name':i.name} for i in user.profile.interests]
-#     }),200
-
 def matching_users():
     current_username = get_jwt_identity()
     user = User.query.filter_by(username=current_username).first()
@@ -217,7 +202,7 @@ def matching_users():
             results.append({
                 "user_id": profile.user.id, #id wird mitgeliefert
                 "name": profile.name,
-                "photo": f"/uploads/{profile.photo}" if profile.photo else None,
+                "photo":profile.photo if profile.photo else None,
                 "city": profile.city,
                 "shared_interests": shared_interests
             })
@@ -242,7 +227,7 @@ def get_my_profile():
         "age": profile.age,
         "city": profile.city,
         "social_type": profile.social_type,
-        "photo": f"/uploads/{profile.photo}" if profile.photo else None,
+        "photo": profile.photo,
         "interests": [{"id": i.id, "name": i.name} for i in profile.interests]
     }), 200
 
@@ -265,7 +250,7 @@ def get_other_profile(user_id):
         "age": profile.age,
         "city": profile.city,
         "social_type": profile.social_type,
-        "photo": f"/uploads/{profile.photo}" if profile.photo else None,
+        "photo":profile.photo if profile.photo else None,
         "interests": [{"id": i.id, "name": i.name} for i in profile.interests]
     }), 200
 
@@ -359,7 +344,7 @@ def get_contacts():
             "username": contact_user.username,
             "profile": {
                 "name": contact_user.profile.name if contact_user.profile else None,
-                "photo": f"/uploads/{contact_user.profile.photo}" if contact_user.profile and contact_user.profile.photo else None
+                "photo": contact_user.profile.photo if contact_user.profile and contact_user.profile.photo else None
             }
         })
     return jsonify(results), 200
@@ -500,11 +485,56 @@ def show_accepted_activities():
 
     return jsonify(results), 200
 
+#----------Upload Photo Route----------------------------------------
+@app.route("/api/upload_photo", methods=["POST"])
+@jwt_required()
+def upload_profile_photo():
+    current_username = get_jwt_identity()
+    current_user = User.query.filter_by(username=current_username).first()
 
-#----------Route zum abrufen der Bilder---------------------------------------
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return app.send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    if not current_user or not current_user.profile:
+        return jsonify({"error": "Profile not found"}), 404
+
+    if "image" not in request.files:
+        return jsonify({"error": "No image in request"}), 400
+
+    file = request.files["image"]
+
+    # ✅ Bytes lesen
+    file_bytes = file.read()
+
+    # ✅ Base64 konvertieren (GENAU DAS erwartet ImageKit als Fallback stabil)
+    encoded_file = base64.b64encode(file_bytes).decode("utf-8")
+
+    try:
+        options = UploadFileRequestOptions(use_unique_file_name=True)
+
+        upload = imagekit.upload_file(
+            file="data:image/jpeg;base64," + encoded_file,  # ✅ Base64 Upload
+            file_name=file.filename,
+            options=options
+        )
+
+        photo_url = upload.url
+        file_id = upload.file_id
+
+        if not photo_url:
+            return jsonify({"error": "No URL returned from ImageKit"}), 500
+
+    except Exception as e:
+        import traceback
+        print("UPLOAD ERROR:", traceback.format_exc())
+        return jsonify({"error": repr(e)}), 500
+
+    current_user.profile.photo = photo_url
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "photo_url": photo_url,
+        "file_id": file_id
+    }), 200
+
 
 
 #-----------Foto löschen----------------------------------------
@@ -517,15 +547,8 @@ def delete_profile_photo():
     if not user or not user.photo:
         return jsonify({"error": "No photo to delete"}), 400
 
-    # Pfad zur Datei ermitteln
-    photo_path = os.path.join(app.config["UPLOAD_FOLDER"], user.photo)
-
-    # Datei löschen (wenn vorhanden)
-    if os.path.exists(photo_path):
-        os.remove(photo_path)
-
     # Datenbank aktualisieren
-    user.photo = None
+    user.profil.photo = None
     db.session.commit()
 
     return jsonify({"message": "Profile photo deleted"}), 200

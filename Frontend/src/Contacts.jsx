@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import api from "./Axios";
 
@@ -52,17 +51,17 @@ export default function Contacts() {
       {contacts.length === 0 ? (
         <p>No Contacts yet</p>
       ) : (
-        <div className="flex flex-wrap justify-center gap-4 shadow-sm">
+        <div className="flex flex-wrap justify-center gap-10">
           {contacts.map((c) => (
             <div
               key={c.user_id}
-              className="drop-shadow-md p-3 rounded shadow w-[200px] text-center"
+              className="drop-shadow-md p-5 rounded-lg shadow w-[200px] text-center bg-white"
             >
               {c.profile.photo ? (
                 <img
-                  src={`http://localhost:5000${c.profile.photo}`}
+                  src={c.profile.photo}
                   alt={c.profile.name}
-                  className="w-24 h-24 object-cover rounded-full mx-auto mb-2"
+                  className="w-24 h-32 object-fill rounded-xl border-none mx-auto mb-3 shadow-md"
                 />
               ) : (
                 <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-2 drop-shadow-sm">

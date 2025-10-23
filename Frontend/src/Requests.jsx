@@ -37,7 +37,7 @@ export default function Requests() {
   const respondContact = async (id, action) => {
     try {
       const res = await api.post(
-        `/respond_to_contact/${id}`,
+        `/contact_request_respond/${id}`,
         { action });
       setMessage(res.data.message);
       loadData();
@@ -77,7 +77,7 @@ export default function Requests() {
         ) : (
           contactRequests.map((req) => (
             <div
-              key={req.id}
+              key={req.request_id}
               className="flex justify-between items-center border-b py-2"
             >
               <span>{req.sender_name}</span>
@@ -91,13 +91,13 @@ export default function Requests() {
 
               <div className="flex gap-2">
                 <button
-                  onClick={() => respondContact(req.id, "accept")}
+                  onClick={() => respondContact(req.request_id, "accept")}
                   className="bg-gray-50 text-black px-3 py-1 rounded text-sm drop-shadow-md hover:scale-110 cursor-pointer hover:bg-green-500"
                 >
                   Accept
                 </button>
                 <button
-                  onClick={() => respondContact(req.id, "decline")}
+                  onClick={() => respondContact(req.request_id, "decline")}
                   className="bg-gray-50 text-black px-3 py-1 rounded text-sm drop-shadow-md hover:scale-110 cursor-pointer hover:bg-red-500 hover:text-white"
                 >
                   Decline

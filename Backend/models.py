@@ -23,8 +23,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(70), nullable=False)
-    
+    password = db.Column(db.String(70), nullable=False)    
 
     profile = db.relationship(
         'Profile',
@@ -42,7 +41,7 @@ class Profile(db.Model):
     age = db.Column(db.Integer, nullable=False)
     city = db.Column(db.String(50), nullable=False)
     social_type = db.Column(db.String(20), nullable=False)
-    photo = db.Column(db.String(200)) #Fotopfad
+    photo = db.Column(db.String(200))
 
     user_id = db.Column(
         db.Integer,

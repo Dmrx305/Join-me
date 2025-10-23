@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useContext, useEffect } from "react";
+import { AuthContext } from "./AuthContext";
 import api from "./Axios";
 import { useNavigate } from "react-router-dom";
+import UploadPhoto from "./UploadPhoto";
 
 
 export default function ProfileForm() {
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [city, setCity] = useState("");
-  const [socialType, setSocialType] = useState("extrovert");
-  const [photo, setPhoto] = useState(null);
+  const {user} = useContext(AuthContext);
+  const [name, setName] = useState(user?.name || "");
+  const [age, setAge] = useState(user?.age || "");
+  const [city, setCity] = useState(user?.city || "");
+  const [socialType, setSocialType] = useState(user?.socialType || "extrovert");
   const [interests, setInterests] = useState([]);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [message, setMessage] = useState("");
@@ -30,19 +31,6 @@ export default function ProfileForm() {
     );
   };
 
-  const handleDeletePhoto = async () => {
-  try {
-    await axios.delete("http://localhost:5000/api/delete_profile_photo", {
-      withCredentials: true,
-    });
-    setPhoto(null);
-    setMessage("Profile photo deleted!");    
-  } catch (err) {
-    console.error(err);
-    setMessage("Failed to delete photo!");
-  }
-};
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -50,22 +38,23 @@ export default function ProfileForm() {
     formData.append("age", age);
     formData.append("city", city);
     formData.append("social_type", socialType);
-    if (photo) formData.append("photo", photo);
     selectedInterests.forEach(id => formData.append("interest_ids", id));
 
     try {
-      await api.post("/create_or_update_profile", formData);
+      const res = await api.post("/create_or_update_profile", formData);
       setMessage("Profile saved!");
-      setTimeout(() => navigate("/show_my_profile"), 1000);
+      
+      setTimeout(() => navigate(res.data.redirect || "/show_my_profile"), 300);
     } catch (err) {
       console.error(err);
-      setMessage("Failed to save profile!");
+      setMessage("Failed to save profile!");      
     }
   };
 
   return (      
       <div className="flex justify-center items-center">
       <div className="max-w-md rounded-xl bg-white shadow-md p-5">
+
         <p 
         className="text-4xl text-center p-5 mb-5 justify-center font-anotherhand tracking-wide [text-shadow:2px_4px_4px_rgba(0,0,0,0.1)]" > 
         Create / Edit Profile 
@@ -109,20 +98,15 @@ export default function ProfileForm() {
         </div>
 
         <div >
-          <label 
-          className="x-4 py-2 rounded bg-white drop-shadow-md w-[120px] h-[30px] cursor-pointer hover:scale-110 flex justify-center items-center">
-          Upload Photo
-          <input 
-          type="file" className="hidden" onChange={e => setPhoto(e.target.files[0])} />
-          </label>
+          <UploadPhoto/>
 
-          <button
+          {/* <button
             type="button"
             onClick={handleDeletePhoto}
             className="mt-2 w-[120px] h-[30px] bg-white rounded hover:scale-110 drop-shadow-md hover:bg-red-400 hover:text-white transition"
           >
             Delete Photo
-          </button>
+          </button> */}
         </div>
 
         {/* Interests */}
