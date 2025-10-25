@@ -52,95 +52,88 @@ export default function ProfileForm() {
   };
 
   return (      
-      <div className="flex justify-center items-center">
-      <div className="max-w-md rounded-xl bg-white shadow-md p-5">
+  <div className="flex justify-center items-center m-5">
+    <div className="max-w-3xl rounded-xl bg-white shadow-md p-5">
 
-        <p 
-        className="text-4xl text-center p-5 mb-5 justify-center font-anotherhand tracking-wide [text-shadow:2px_4px_4px_rgba(0,0,0,0.1)]" > 
+      <p className="text-4xl text-center p-5 mb-5 font-anotherhand tracking-wide [text-shadow:2px_4px_4px_rgba(0,0,0,0.1)]">
         Create / Edit Profile 
-        </p>
+      </p>
 
-      <form 
-      onSubmit={handleSubmit}
-      className="flex justify-center items-center flex-col space-y-4" 
-      >
-        
-          <input 
-          className="max-w-md h-[30px] text-center bg-white rounded-md  drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
-          placeholder="Name"
-          value={name}
-          onChange={e => setName(e.target.value)}
+      {/* 2-Spalten Layout */}
+      <div className="flex flex-col md:flex-row gap-10">
+
+        {/* LEFT: Upload */}
+        <div className="flex justify-center md:justify-start">
+          <UploadPhoto />
+        </div>
+
+        {/* RIGHT: FORM */}
+        <form 
+          onSubmit={handleSubmit}
+          className="flex flex-col space-y-4 flex-1"
+        >
+          <input className="h-[30px] text-center bg-white rounded-md drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
+            placeholder="Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
           />
 
-          <input 
-          className="max-w-md h-[30px] text-center bg-white rounded-md drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
-          placeholder="Age"
-          type="number"
-          value={age}
-          onChange={e => setAge(e.target.value)}
-          />
-   
-          <input 
-          className="max-w-md h-[30px] text-center bg-white rounded-md   drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
-          placeholder="City"
-          value={city}
-          onChange={e => setCity(e.target.value)}
+          <input className="h-[30px] text-center bg-white rounded-md drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
+            placeholder="Age"
+            type="number"
+            value={age}
+            onChange={e => setAge(e.target.value)}
           />
 
+          <input className="h-[30px] text-center bg-white rounded-md drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
+            placeholder="City"
+            value={city}
+            onChange={e => setCity(e.target.value)}
+          />
 
-        <div>
-          <select className="text-center w-full h-[35px] bg-white rounded-md  drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
+          <select className="text-center w-full h-[35px] bg-white rounded-md drop-shadow-md focus:outline-none focus:ring-1 focus:ring-[#FFCA7B] transition"
             value={socialType}
             onChange={e => setSocialType(e.target.value)}>
             <option value="extrovert">Extrovert</option>
             <option value="introvert">Introvert</option>
           </select>
-        </div>
 
-        <div >
-          <UploadPhoto/>
+          {/* Interests */}
+          <div>
+            <p className="text-xl font-medium mb-4 text-center">Select Interests</p>
 
-          {/* <button
-            type="button"
-            onClick={handleDeletePhoto}
-            className="mt-2 w-[120px] h-[30px] bg-white rounded hover:scale-110 drop-shadow-md hover:bg-red-400 hover:text-white transition"
-          >
-            Delete Photo
-          </button> */}
-        </div>
+            <div className="grid grid-cols-2 gap-3">
+              {interests.map(i => (
+                <label
+                  className="flex gap-1 hover:scale-110 hover:bg-[#FFCA7B] transition cursor-pointer justify-center bg-white rounded-md drop-shadow-md py-1 px-2"
+                  key={i.id}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedInterests.includes(i.id)}
+                    onChange={() => handleInterestChange(i.id)}
+                  />
+                  {i.name}
+                </label>
+              ))}
+            </div>
+          </div>
 
-        {/* Interests */}
-        <div>
-          <p className="text-xl font-medium mb-4 text-center">
-            Select Interests
-          </p>
+          <button
+            className="w-[100px] h-[30px] mx-auto flex justify-center items-center bg-white rounded-md font-medium hover:scale-110 hover:bg-green-400 hover:text-white transition drop-shadow-md"
+            type="submit">
+            Save
+          </button>
 
-          <div className="grid grid-cols-2 gap-3">
-          {interests.map(i => (
-            <label 
-            className="flex gap-1 hover:scale-110 hover:bg-[#FFCA7B] transition cursor-pointer justify-center bg-white rounded-md drop-shadow-md py-1 px-2" 
-            key={i.id}
-            >
-              <input className="flex"
-                type="checkbox"
-                checked={selectedInterests.includes(i.id)}
-                onChange={() => handleInterestChange(i.id)}
-              />
-              {i.name}
-            </label>
-          ))}
-        </div>
-        </div>
-
-        <button 
-        className="w-[100px] h-[30px] flex justify-center items-center bg-white rounded-md font-medium hover:scale-110 hover:bg-green-400 hover:text-white transition drop-shadow-md" type="submit">
-          Save
-        </button>
-      </form>
-      <span className="flex justify-center mt-1 text-xl">
-      {message && <h1 className="text-green-600 text-md font-medium rounded-md drop-shadow-md mt-2">{message}</h1>}
-      </span>
+          {message && (
+            <p className="text-center text-green-600 text-md font-medium rounded-md drop-shadow-md mt-2">
+              {message}
+            </p>
+          )}
+        </form>
       </div>
-      </div>
-  );
+    </div>
+  </div>
+);
 }
+

@@ -43,7 +43,7 @@ export default function UploadPhoto() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white p-6 rounded-xl shadow-md w-full max-w-sm mx-auto mt-10">
+    <div className="flex flex-col items-center bg-white p-6 rounded-xl shadow-md  max-w-sm  max-h-[65%]">
       {preview ? (
         <img src={preview} className="w-32 h-40 object-cover rounded-md mb-4" />
       ) : (
@@ -58,7 +58,7 @@ export default function UploadPhoto() {
       <button
         onClick={handleUpload}
         disabled={loading}
-        className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600"
+        className="bg-orange-500 text-white px-4 py-2  rounded-md hover:bg-orange-600"
       >
         {loading ? "Uploading..." : "Upload"}
       </button>

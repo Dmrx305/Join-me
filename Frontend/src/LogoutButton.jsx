@@ -16,7 +16,7 @@
   return (
     <button
     onClick={handleLogout}
-    className="bg-white w-[100px] h-[25px] flex items-center justify-center hover:scale-110 rounded-sm  drop-shadow-md cursor-pointer transition"
+    className="bg-white  w-[60px] h-[18px] md:w-[100px] md:h-[25px] flex items-center justify-center hover:scale-110 rounded-sm  drop-shadow-md cursor-pointer transition text-xs md:text-md"
     >
     Logout
     </button> 

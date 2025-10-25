@@ -28,7 +28,6 @@ instance/
 
 # Environment & secrets
 .env
-.env.*
 *.pem
 *.key
 

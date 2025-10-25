@@ -14,5 +14,33 @@ If both users accept, the match is confirmed and Users can then notify each othe
 Join me is not meant for any kind of dating, chatting similar.
 The focus is on Joining each others activities, with the goal of the users to just benefit and enjoy the company of each other!
 
+Tech Stack
+Bereich	Technologie
+Frontend	React, Vite, Axios, TailwindCSS
+Backend	Flask, SQLAlchemy, Flask-JWT-Extended
+Auth	JWT Cookies
+Storage	SQLite
+Uploads	ImageKit.io
 
 
+
+After Git Clone:
+
+Backend:
+
+cd backend
+cp .env.example .env
+set.env keys
+pip install -r requirements.txt
+flask run
+
+
+Frontend:
+
+cd frontend
+cp .env.example .env
+npm install
+npm run dev
+
+Frontend .env.example
+VITE_API_BASE_URL=http://localhost:5000/api

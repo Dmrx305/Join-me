@@ -18,7 +18,7 @@ export default function ShowOtherProfile() {
     return <p>{error}</p>;
   }
 
-  if (!profileData) return <p>Loading...</p>;
+  if (!profileData) return <p className="flex justify-center text-2xl">Loading...</p>;
 
   return (
     <div className="flex justify-center text-lg">  

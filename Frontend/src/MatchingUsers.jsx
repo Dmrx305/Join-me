@@ -73,19 +73,19 @@ export default function MatchingUsers() {
               )}
 
               {/* Buttons */}
-              <div className="flex flex-col p-5">
+              <div className="flex flex-col items-center p-5">
                 <button
                   onClick={() => navigate(`/other_profile/${matchingUser.user_id}`)}
-                  className="bg-[#F28705] text-white rounded px-3 py-1 text-sm hover:scale-105 transition cursor-pointer drop-shadow-sm"
+                  className="bg-[#F28705] text-white rounded-md py-1 px-4 flex justify-center text-sm hover:scale-105 transition cursor-pointer drop-shadow-sm"
                 >
                   {matchingUser.name}'s Profile
                 </button>
 
                 <button
                   onClick={() => sendRequest(matchingUser.user_id)}
-                  className="bg-[#F28705] text-white rounded m-3 px-3 py-1 text-sm hover:scale-105 drop-shadow-sm transition"
+                  className="bg-[#F28705] text-white rounded-md m-3 px-3 py-1 text-sm hover:scale-105 drop-shadow-sm transition"
                 >
-                  Send contact request
+                  Send contact request ✉️
                 </button>
               </div>
 

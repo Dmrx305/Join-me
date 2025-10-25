@@ -10,7 +10,7 @@ export default function ShowMyProfile() {
 
   return (
     <div className="flex justify-center mt-5">
-      <div className="bg-white shadow-md p-5 rounded-xl w-1/3 text-center">
+      <div className="bg-white shadow-md p-5 rounded-xl w-1/4 text-center">
         <h2 className="text-2xl font-medium mb-4">Your Profile</h2>
 
         {user.photo ? (
