@@ -22,10 +22,8 @@ export default function ActivityHistory() {
 
   // ---- UI ----
   return (
-    <div className="flex flex-col items-center p-6">
-      <h2 className="text-2xl font-semibold mb-6 text-[#F28705]">
-        Accepted Activities
-      </h2>
+    <div className="flex flex-col items-center mb-5">
+      
 
       {message && (
         <p className="text-red-500 mb-4 font-medium">{message}</p>
@@ -37,12 +35,18 @@ export default function ActivityHistory() {
             No accepted activities yet.
           </p>
         ) : (
-          <div className=" bg-white flex gap-10">
+          <div className=" bg-white">
+
+            <h2 className="text-xl font-semibold  text-[#F28705]">
+            Accepted Activities
+            </h2>
+
             {acceptedActivities.map((a, i) => (
               <div key={i} className="py-3 flex flex-col">
+
                 <p className="font-semibold text-[#F28705]">
                   {a.activity}
-                </p>
+                </p>                
                 <p className="text-sm text-gray-700">Date: {a.date}</p>
                 <p className="text-sm text-gray-700">With: {a.partner}</p>
                 <p className="text-xs italic text-gray-500">

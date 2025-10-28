@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import os
-from datetime import timedelta
+from datetime import datetime
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request,redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -349,6 +349,27 @@ def get_contacts():
         })
     return jsonify(results), 200
 
+#---------Kontakt löschen----------------------------------------
+@app.route('/api/delete_contact/<int:contact_id>', methods=['DELETE'])
+@jwt_required()
+def delete_contact(contact_id):
+    current_username = get_jwt_identity()
+    user = User.query.filter_by(username=current_username).first()
+
+    contact = ContactRequest.query.filter(
+        ((ContactRequest.sender_id == user.id) & (ContactRequest.receiver_id == contact_id)) |
+        ((ContactRequest.receiver_id == user.id) & (ContactRequest.sender_id == contact_id)),
+        ContactRequest.status == "accepted"
+    ).first()
+
+    if not contact:
+        return jsonify({"error": "Contact not found"}), 404
+
+    db.session.delete(contact)
+    db.session.commit()
+
+    return jsonify({"message": "Contact deleted"}), 200
+
 #----------------Einladung zur Aktivität senden------------------------------------------------------
 @app.route('/api/send_activity_invite/<int:receiver_id>', methods=['POST'])
 @jwt_required()
@@ -373,20 +394,23 @@ def send_activity_invite(receiver_id):
 
     data = request.get_json()
     activity_name = data.get("activity")
-    date = data.get("date")
+    date_str = data.get("date")
 
-    if not activity_name or not date:
+    if not activity_name or not date_str:
         return jsonify({"error": "Activity and date are required"}), 400
+
+    date_obj = datetime.fromisoformat(date_str)
+    formatted_date = date_obj.strftime("%d.%m.%Y %H:%M")
     
     invite = ActivityInvite(
         sender_id=sender.id,
         receiver_id=receiver_id,
         activity=activity_name,
-        date=date
+        date=date_obj
     )
     db.session.add(invite)
     db.session.commit()
-    return jsonify({"message": f"Do you want to Join me for {activity_name} at {date} ?"}), 201
+    return jsonify({"message": f"Do you want to Join me for {activity_name} at {formatted_date} ?"}), 201
 
 #----------------Einladungen anzeigen------------------------------------------------------
 
@@ -400,12 +424,14 @@ def get_invites():
 
     results = []
     for inv in invites:
+        formatted_date = inv.date.strftime("%d.%m.%Y %H:%M")
+
         results.append({
             "invite_id": inv.id,
             "from": inv.sender.username,
             "activity": inv.activity,
-            "date": inv.date,
-            "preset_text": f"I'm going to {inv.activity} at {inv.date}, want to join me?"
+            "date": formatted_date,
+            "preset_text": f"I'm going to {inv.activity} at {formatted_date}, want to join me?"
         })
     return jsonify(results), 200
 
@@ -442,13 +468,15 @@ def get_sent_invites():
     user = User.query.filter_by(username=current_username).first()
 
     invites = ActivityInvite.query.filter_by(sender_id=user.id).all()
-
+    
     results = []
     for inv in invites:
+        formatted_date = inv.date.strftime("%d.%m.%Y %H:%M")
+
         results.append({
             "to": inv.receiver.username,
             "activity": inv.activity,
-            "date": inv.date,
+            "date": formatted_date,
             "status": inv.status
         })
 
@@ -468,6 +496,8 @@ def show_accepted_activities():
 
     results = []
     for inv in invites:
+        formatted_date = inv.date.strftime("%d.%m.%Y %H:%M")
+
         # Partner herausfinden
         if inv.sender_id == user.id:
             partner = User.query.get(inv.receiver_id)
@@ -478,7 +508,7 @@ def show_accepted_activities():
 
         results.append({
             "activity": inv.activity,
-            "date": inv.date,
+            "date": formatted_date,
             "partner": partner.username,
             "role": role
         })

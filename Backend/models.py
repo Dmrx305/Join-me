@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -108,7 +109,7 @@ class ActivityInvite(db.Model):
         db.ForeignKey('interests.name'), 
         nullable=False
     )
-    date = db.Column(db.String(50), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.String(20), nullable=False, default='pending')
 
     sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_invites')

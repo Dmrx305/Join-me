@@ -21,9 +21,9 @@ export default function ShowOtherProfile() {
   if (!profileData) return <p className="flex justify-center text-2xl">Loading...</p>;
 
   return (
-    <div className="flex justify-center text-lg">  
+    <div className="flex justify-center text-md">  
             
-      <div className="flex justify-center flex-col items-center bg-white rounded-lg p-5 w-1/4 drop-shadow-md">
+      <div className="flex justify-center flex-col items-center bg-white rounded-lg p-5 drop-shadow-md">
 
       <section className="flex flex-col items-center mb-5 ">
 

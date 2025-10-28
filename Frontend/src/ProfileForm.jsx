@@ -55,7 +55,7 @@ export default function ProfileForm() {
   <div className="flex justify-center items-center m-5">
     <div className="max-w-3xl rounded-xl bg-white shadow-md p-5">
 
-      <p className="text-4xl text-center p-5 mb-5 font-anotherhand tracking-wide [text-shadow:2px_4px_4px_rgba(0,0,0,0.1)]">
+      <p className="text-3xl text-center md:p-5 md:mb-5 font-anotherhand tracking-wide">
         Create / Edit Profile 
       </p>
 

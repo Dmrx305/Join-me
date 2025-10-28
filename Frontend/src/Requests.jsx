@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import ActivityHistory from "./ActivityHistory";
 import api from "./Axios";
 import { useNavigate } from "react-router-dom";
@@ -62,7 +61,7 @@ export default function Requests() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-10">
+    <div className="flex flex-col items-center gap-5 ">
       <h2 className="text-2xl">Requests & Invites</h2>
 
       {message && (
@@ -70,20 +69,20 @@ export default function Requests() {
       )}
 
       {/*Kontaktanfragen*/}
-      <div className="w-full max-w-md bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-2">Contact Requests</h3>
+      <div className=" bg-white p-4 rounded-lg shadow">
+        <h3 className="text-lg font-semibold mb-2 text-center">Contact Requests</h3>
         {contactRequests.length === 0 ? (
           <p className="text-sm text-gray-500">No contact requests</p>
         ) : (
           contactRequests.map((req) => (
             <div
               key={req.request_id}
-              className="flex justify-between items-center border-b py-2"
+              className="flex flex-col md:flex-row justify-between items-center gap-4 border-b p-5"
             >
-              <span>{req.sender_name}</span>
+              <span >{req.sender_name}</span>
                 <button
                   onClick={() => navigate(`/other_profile/${req.sender_id}`)}
-                  className="bg-[#F28705] text-white rounded px-3 py-1 text-sm hover:scale-105 transition-transform cursor-pointer drop-shadow-sm"
+                  className="bg-[#F28705] text-white rounded px-3 py-1 text-sm hover:scale-105 transition-transform cursor-pointer drop-shadow-sm  md:w-1/2"
                 >
                   {req.sender_name}'s Profile
                 </button>
@@ -109,25 +108,31 @@ export default function Requests() {
       </div>
 
       {/*Erhaltene Aktivitätseinladungen*/}
-      <div className="w-full max-w-md bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-2">Activity Invites</h3>
+      <div className=" bg-white p-6 rounded-lg shadow flex flex-col">
+        <h3 className="text-lg font-semibold mb-2 text-center">Activity Invites</h3>
         {receivedInvites.length === 0 ? (
           <p className="text-sm text-gray-500">No activity invites</p>
         ) : (
           receivedInvites.map((inv) => (
             <div
               key={inv.invite_id}
-              className="border-b py-2 flex flex-col gap-1"
+              className="border-b flex flex-col gap-1 items-center md:flex-row"
             >
               <p className="font-medium">
                 From: <span className="text-[#F28705]">{inv.from}</span>
               </p>
-              <p>Activity: {inv.activity}</p>
-              <p>Date: {inv.date}</p>
-              <p className="text-sm italic text-gray-600">
-                {inv.preset_text}
-              </p>
-              <div className="flex gap-2 mt-2">
+
+              <p className="text-md">
+                Activity: {inv.activity}</p>
+
+              <p className="text-md text-center">
+                Date: {inv.date}</p>
+
+              <h1 className="text-2xl font-anotherhand text-[#F28705] ">
+                Join me?
+              </h1>
+
+              <div className="flex gap-2 mt-2 pb-3">
                 <button
                   onClick={() => respondInvite(inv.invite_id, "accept")}
                   className="bg-gray-50 text-black px-3 py-1 rounded text-sm drop-shadow-md hover:scale-110 cursor-pointer hover:bg-green-500"
@@ -147,7 +152,7 @@ export default function Requests() {
       </div>
 
       {/* Gesendete Einladungen Übersicht*/}
-      <div className="w-full max-w-md bg-white p-4 rounded-lg shadow">
+      <div className="md:w-1/4 bg-white p-4 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-2">Sent Activity Invites</h3>
         {sentInvites.length === 0 ? (
           <p className="text-sm text-gray-500">No sent invites</p>
@@ -158,22 +163,23 @@ export default function Requests() {
               className="border-b py-2 flex justify-between items-center"
             >
               <div>
-                <p>To: {inv.to}</p>
+                <p className="flex ">To: {inv.to} </p>
                 <p className="text-sm">
-                  {inv.activity} – {inv.date}
+                  {inv.activity} 📆 {inv.date}
                 </p>
-              </div>
-              <p
+   
+              <h2
                 className={`text-sm font-semibold ${
                   inv.status === "accepted"
-                    ? "text-green-600"
-                    : inv.status === "declined"
-                    ? "text-red-600"
-                    : "text-gray-500"
+                  ? "text-green-600"
+                  : inv.status === "declined"
+                  ? "text-red-600"
+                  : "text-gray-500"
                 }`}
-              >
-                {inv.status}
-              </p>
+                >{inv.status}                
+              </h2>
+                </div>
+
             </div>
           ))
         )}

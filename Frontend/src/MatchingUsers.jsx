@@ -35,17 +35,17 @@ export default function MatchingUsers() {
   }, []);
 
   return (
-    <div>
-      <h2 className="text-2xl flex justify-center mb-5">Matching Users</h2>
+    <div >
+      <h2 className="text-2xl flex justify-center mb-5 font-medium">Matching Users</h2>
 
       {matchingUsers.length === 0 ? (
         <p className="flex justify-center">No matching users in your city yet!</p>
       ) : (
-        <div className="flex justify-center gap-10">
+        <div className="flex flex-col md:flex-row justify-center items-center gap-5 md:gap-10">
           {matchingUsers.map((matchingUser) => (
             <div
               key={matchingUser.user_id}
-              className="flex flex-col border-none p-5 bg-white shadow-md rounded-xl items-center"
+              className="flex flex-col border-none p-5 bg-white shadow-md rounded-xl items-center  w-1/2 md:w-1/6"
             >
               {/* Foto oder Initial */}
               {matchingUser.photo ? (
@@ -64,7 +64,7 @@ export default function MatchingUsers() {
 
               {/* Interessen */}
               {matchingUser.shared_interests?.length > 0 && (
-                <p>
+                <p className="text-center">
                   Shared Interests:{" "}
                   <span className="font-medium italic">
                     {matchingUser.shared_interests.join(", ")}

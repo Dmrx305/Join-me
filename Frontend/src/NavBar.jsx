@@ -7,19 +7,20 @@ export default function NavBar() {
     const {user} = useContext(AuthContext);
 
     return (
-        <nav className="bg-white shadow-md mb-10">
-            <div className="relative flex items-center  justify-evenly md:justify-between p-3 mx-5">
+        <nav className="bg-white shadow-md mb-5">
+            <div className="md:relative flex items-center justify-evenly md:justify-between md:p-2 md:mx-5">
 
+            <div className="flex flex-col items-center m-1">
             {/* Left */}
-            <h1 className="font-anotherhand text-xl md:text-5xl text-[#F28705]" 
-            >
+            <h1 className="font-anotherhand text-xl md:text-4xl text-[#F28705]">
             Join me!            
             </h1>
 
             {/* Center */}
-            <h1 className="absolute left-1/2 -translate-x-1/2 flex justify-center items-center md:text-3xl p-1 font-anotherhand text-[#444444]">
-            Hi {user?.name}!
-            </h1>
+            <p className=" text-[#444444]">
+            Hi {user?.name}
+            </p>
+            </div>
             
             {/* Right */}
             <div className="flex gap-1 md:gap-4 ">               

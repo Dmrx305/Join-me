@@ -21,6 +21,15 @@ export default function Contacts() {
     }
   };
 
+  const deleteContact = async (contact_id) => {
+    try {
+      await api.delete(`/delete_contact/${contact_id}`);
+      loadContacts();
+    } catch(err) {
+      console.error("Failed to delete contact",err);
+    }
+  }
+
   const sendInvite = async () => {
     if (!selectedContact) return;
     try {
@@ -72,22 +81,32 @@ export default function Contacts() {
               <p>{c.profile.name || c.username}</p>
 
               <div className="flex flex-col gap-2 mt-3">
+                {/*  Show Other Profile Button*/}
                 <button
                   onClick={() => navigate(`/other_profile/${c.user_id}`)}
-                  className="bg-[#F28705] text-white rounded px-3 py-1 text-sm hover:scale-105 transition-transform cursor-pointer"
+                  className="bg-[#F28705] text-white rounded px-3 py-1 text-sm hover:scale-105 transition-transform cursor-pointer shadow-md"
                 >
                   {c.profile.name}'s Profile
                 </button>
-
+                {/*  Invite to activity Button*/}
                 <button
                   onClick={() => {
                     setSelectedContact(c);
                     setShowInvite(true);
                   }}
-                  className="bg-white border border-[#F28705] text-[#F28705] cursor-pointer rounded px-3 py-1 text-sm hover:bg-[#F28705] hover:text-white transition-colors"
+                  className="bg-white border border-[#F28705] text-[#F28705] cursor-pointer rounded px-3 py-1 text-sm hover:bg-[#F28705] hover:text-white transition-colors shadow-md"
                 >
                   Invite to Activity
                 </button>
+                {/*  Delete Contact*/}
+                {contacts.map(c=> (
+                  <div key={c.user_id} className="flex justify-center items-center ">
+                  <button onClick={() => deleteContact(c.user_id)}
+                  className="text-red-500 hover:scale-105 border-1 rounded-md px-1 shadow-md transition" >
+                    Delete Contact
+                  </button>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
