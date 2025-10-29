@@ -28,7 +28,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(
     seconds=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 3600))
 )
-app.config['JWT_TOKEN_LOCATION'] = [os.getenv('JWT_TOKEN_LOCATION', 'cookies')]
+app.config['JWT_TOKEN_LOCATION'] = [os.getenv('cookies','headers')]
 app.config['JWT_COOKIE_SECURE'] = os.getenv('JWT_COOKIE_SECURE', 'False').lower() == 'true'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('JWT_COOKIE_CSRF_PROTECT', 'False').lower() == 'true'
 app.config['JWT_ACCESS_COOKIE_NAME'] = os.getenv('JWT_ACCESS_COOKIE_NAME', 'access_token_cookie')
@@ -99,6 +99,7 @@ def login():
         response = jsonify({
             'Message':"Login successfully!",
             'access_token': access_token,})
+        
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
         return response, 200

@@ -15,6 +15,8 @@ export default function ProfileForm() {
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [message, setMessage] = useState("");
   const navigate = useNavigate()
+  const { setUser } = useContext(AuthContext);
+
 
   const loadInterests = async () => {
     const res = await api.get("/interests")
@@ -42,9 +44,12 @@ export default function ProfileForm() {
 
     try {
       const res = await api.post("/create_or_update_profile", formData);
+      const updated = await api.get("/show_my_profile");
+      setUser(updated.data)
+
       setMessage("Profile saved!");
       
-      setTimeout(() => navigate(res.data.redirect || "/show_my_profile"), 300);
+      setTimeout(() => navigate("/show_my_profile"), 600);
     } catch (err) {
       console.error(err);
       setMessage("Failed to save profile!");      
@@ -126,9 +131,9 @@ export default function ProfileForm() {
           </button>
 
           {message && (
-            <p className="text-center text-green-600 text-md font-medium rounded-md drop-shadow-md mt-2">
+            <h1 className="text-center text-green-600 text-xl font-medium rounded-md drop-shadow-md mt-2 ">
               {message}
-            </p>
+            </h1>
           )}
         </form>
       </div>

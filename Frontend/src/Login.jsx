@@ -21,7 +21,8 @@ export default function Login() {
       );
 
       if (res.status === 200) {
-        login();
+
+        login(res.data.access_token);
         navigate("/show_my_profile");
       } else {
         alert("Login failed!");
