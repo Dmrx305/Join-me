@@ -44,7 +44,16 @@ imagekit = ImageKit(
 db.init_app(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-CORS(app, supports_credentials=True,origins=["http://localhost:5173","join-me-gamma.vercel.app"]) #erlaubt Cookies
+CORS(
+    app,
+    supports_credentials=True,
+    origins=[
+        "http://localhost:5173",
+        "https://join-me-gamma.vercel.app",
+    ],
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"]
+)
 
 # @app.before_request
 # def create_tables():
