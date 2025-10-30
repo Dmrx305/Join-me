@@ -16,7 +16,6 @@ export default function ProfileForm() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate()
   const { setUser } = useContext(AuthContext);
-  console.log(user)
 
   const loadInterests = async () => {
     const res = await api.get("/interests")
