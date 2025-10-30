@@ -16,7 +16,7 @@ export default function ProfileForm() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate()
   const { setUser } = useContext(AuthContext);
-
+  console.log(user)
 
   const loadInterests = async () => {
     const res = await api.get("/interests")
@@ -55,7 +55,9 @@ export default function ProfileForm() {
       setMessage("Failed to save profile!");      
     }
   };
-
+  if(!user) {
+    return(<div>No user found</div>)
+  }
   return (      
   <div className="flex justify-center items-center m-5">
     <div className="max-w-3xl rounded-xl bg-white shadow-md p-5">
