@@ -77,7 +77,9 @@ CORS(
 #         db.session.commit()
 
 #------------Registrieren---------------------------------------
-
+with app.app_context():
+    db.create_all()
+    
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -618,6 +620,4 @@ def get_interests():
 
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)
