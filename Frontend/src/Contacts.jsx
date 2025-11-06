@@ -88,16 +88,17 @@ export default function Contacts() {
                 >
                   {c.profile.name}'s Profile
                 </button>
+
                 {/*  Invite to activity Button*/}
                 <button
                   onClick={() => {
                     setSelectedContact(c);
                     setShowInvite(true);
                   }}
-                  className="bg-white border border-[#F28705] text-[#F28705] cursor-pointer rounded px-3 py-1 text-sm hover:bg-[#F28705] hover:text-white transition-colors shadow-md"
-                >
+                  className="bg-white border border-[#F28705] text-[#F28705] cursor-pointer rounded px-3 py-1 text-sm hover:bg-[#F28705] hover:text-white transition-colors shadow-md">
                   Invite to Activity
                 </button>
+
                 {/*  Delete Contact*/}
                 {contacts.map(c=> (
                   <div key={c.user_id} className="flex justify-center items-center ">

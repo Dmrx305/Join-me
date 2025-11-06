@@ -7,7 +7,6 @@ export default function DeleteProfile() {
    const [message,setMessage] = useState("")
    const navigate = useNavigate()
    const {logout} = useContext(AuthContext);
-
   
      const handleDelete = async() => {
       if (!window.confirm("Are you sure you want to delete youre profile?"))return;
@@ -24,7 +23,9 @@ export default function DeleteProfile() {
 
      return(
         <>
-        <button className="bg-white drop-shadow-md p-1 text-sm rounded-sm hover:scale-105 hover:bg-red-400 hover:text-white cursor-pointer transition" onClick={handleDelete}>Delete Profile</button>
+        <button className="bg-white drop-shadow-md p-1 text-sm rounded-sm hover:scale-105 hover:bg-red-400 hover:text-white cursor-pointer transition" onClick={handleDelete}>
+         Delete Profile
+        </button>
         </>
      )
 }

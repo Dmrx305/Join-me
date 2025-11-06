@@ -64,7 +64,6 @@ export default function Login() {
           placeholder="Password"
         />
 
-
         <button className="bg-[#F28705] text-white hover:scale-105 w-[100px] h-[25px] flex items-center justify-center rounded-lg drop-shadow-md cursor-pointer transition" type="submit">
           Login
         </button>

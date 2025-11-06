@@ -116,7 +116,7 @@ export default function Requests() {
           receivedInvites.map((inv) => (
             <div
               key={inv.invite_id}
-              className="border-b flex flex-col gap-1 items-center md:flex-row"
+              className="border-b flex flex-col gap-1 items-center md:w-88"
             >
               <p className="font-medium">
                 From: <span className="text-[#F28705]">{inv.from}</span>
@@ -152,8 +152,8 @@ export default function Requests() {
       </div>
 
       {/* Gesendete Einladungen Übersicht*/}
-      <div className="md:w-1/4 bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-2">Sent Activity Invites</h3>
+      <div className="md:w-100 md:p-5 bg-white p-4 rounded-lg shadow ">
+        <h3 className="text-lg font-semibold mb-2 text-center">Sent Activity Invites</h3>
         {sentInvites.length === 0 ? (
           <p className="text-sm text-gray-500">No sent invites</p>
         ) : (
@@ -163,7 +163,7 @@ export default function Requests() {
               className="border-b py-2 flex justify-between items-center"
             >
               <div>
-                <p className="flex ">To: {inv.to} </p>
+                <p className="flex">To: {inv.to} </p>
                 <p className="text-sm">
                   {inv.activity} 📆 {inv.date}
                 </p>

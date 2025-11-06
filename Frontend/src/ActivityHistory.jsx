@@ -5,7 +5,6 @@ export default function ActivityHistory() {
   const [acceptedActivities, setAcceptedActivities] = useState([]);
   const [message, setMessage] = useState("");
 
-  // ---- Daten vom Backend laden ----
   const loadAcceptedActivities = async () => {
     try {
       const res = await api.get("/show_accepted_activities");
@@ -20,7 +19,6 @@ export default function ActivityHistory() {
     loadAcceptedActivities();
   }, []);
 
-  // ---- UI ----
   return (
     <div className="flex flex-col items-center mb-5">
       

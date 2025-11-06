@@ -14,8 +14,6 @@ import ActivityHistory from "./ActivityHistory";
 import DeleteProfile from "./DeleteProfile";
 import UploadPhoto from "./UploadPhoto";
 
-
-
 function AppRoutes() {
   const {token} = useContext(AuthContext);
   const [showRegister, setShowRegister] = useState(false);
@@ -118,15 +116,7 @@ function AppRoutes() {
           path="/upload_photo"
           element={token? <UploadPhoto /> : <Navigate to="/login" />}
         />
-
-
-
-
-
       </Routes>
-
-
-
   );
 }
 
