@@ -1,10 +1,19 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { Link } from "react-router-dom";
 import DeleteProfile from "./DeleteProfile";
+import { useNavigate } from "react-router-dom";
 
 export default function ShowMyProfile() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && user.profileMissing) {
+      navigate("/create_or_update_profile")
+    }
+  }, [user]);
+
 
   if (!user) return <p className="text-center text-xl">Loading profile...</p>;
 

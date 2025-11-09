@@ -19,13 +19,20 @@ export function AuthProvider({children})  {
     };
    
         useEffect(() => {
-    if (token) {
-      api
-        .get("/show_my_profile")
-        .then((res) => setUser(res.data))
-        .catch(() => setUser(null));
-    }
-  }, [token]);
+  if (token) {
+    api
+      .get("/show_my_profile")
+      .then((res) => setUser(res.data))
+      .catch((err) => {
+        if (err.response && err.response.status === 404) {
+          setUser({ profileMissing: true });
+        } else {
+          setUser(null);
+        }
+      });
+  }
+}, [token]);
+
 
     return (
         <AuthContext.Provider value={{token,login, logout, user, setUser}}>
