@@ -9,7 +9,7 @@ export default function ShowMyProfile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && user.profileMissing) {
+    if (!user) {
       navigate("/create_or_update_profile")
     }
   }, [user]);
