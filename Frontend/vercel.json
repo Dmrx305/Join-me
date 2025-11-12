@@ -1,5 +1,19 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).(js|css|json|png|jpg|svg)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
   ]
 }

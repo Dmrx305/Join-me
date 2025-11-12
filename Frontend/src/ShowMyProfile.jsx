@@ -7,14 +7,15 @@ import { useNavigate } from "react-router-dom";
 export default function ShowMyProfile() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-
+  console.log(user)
   useEffect(() => {
     if (!user) {
+      console.log(user)
       navigate("/create_or_update_profile")
     }
   }, [user]);
 
-
+  console.log(user)
   if (!user) return <p className="text-center text-xl">Loading profile...</p>;
 
   return (
