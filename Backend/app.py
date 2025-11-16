@@ -76,6 +76,24 @@ CORS(
 #         ])
 #         db.session.commit()
 
+#--------Interessen hinzufügen-------------------------------
+@app.route('/api/add_interest', methods=['POST'])
+def add_interests():
+    data = request.get_json()
+    name = data.get('name')
+
+    if not name:
+        return jsonify({'error': 'Interest name is required'}), 400
+    existing = Interest.query.filter_by(name=name).first()
+
+    if existing:
+        return jsonify({'error': 'Interest already exists'}), 400
+    
+    new_interest = Interest(name=name)
+    db.session.add(new_interest)
+    db.session.commit()
+    return jsonify({'message': 'Interest added successfully'}), 201
+
 #------------Registrieren---------------------------------------
 with app.app_context():
     db.create_all()
