@@ -47,9 +47,9 @@ export default function ActivityHistory() {
                 </p>                
                 <p className="text-sm text-gray-700">Date: {a.date}</p>
                 <p className="text-sm text-gray-700">With: {a.partner}</p>
-                <p className="text-xs italic text-gray-500">
+                <p className="text-xs italic text-gray-500 ">
                   You are the {a.role}
-                </p>
+               </p>
               </div>
             ))}
           </div>

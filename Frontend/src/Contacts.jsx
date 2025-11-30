@@ -73,8 +73,8 @@ export default function Contacts() {
                   className="w-24 h-32 object-fill rounded-xl border-none mx-auto mb-3 shadow-md"
                 />
               ) : (
-                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-2 drop-shadow-sm">
-                  <span>No Photo</span>
+                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6 mt-5 drop-shadow-sm text-xl">
+                  <span>{c.profile.name.slice(0,1)}</span>
                 </div>
               )}
 
@@ -100,14 +100,11 @@ export default function Contacts() {
                 </button>
 
                 {/*  Delete Contact*/}
-                {contacts.map(c=> (
-                  <div key={c.user_id} className="flex justify-center items-center ">
-                  <button onClick={() => deleteContact(c.user_id)}
+                <button onClick={() => deleteContact(c.user_id)}
                   className="text-red-500 hover:scale-105 border-1 rounded-md px-1 shadow-md transition" >
                     Delete Contact
                   </button>
-                  </div>
-                ))}
+                
               </div>
             </div>
           ))}

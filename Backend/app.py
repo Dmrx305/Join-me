@@ -55,26 +55,6 @@ CORS(
     methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"]
 )
 
-# @app.before_request
-# def create_tables():
-#     db.create_all()
-
-# def create_interests():
-#     db.create_all()
-#     if Interest.query.count() == 0:
-#         db.session.add_all([
-#             Interest(name="Hiking"),
-#             Interest(name="Squash"),
-#             Interest(name="Bouldern"),
-#             Interest(name="Swimming"),
-#             Interest(name="Cinema"),
-#             Interest(name="Bar hopping"),
-#             Interest(name="Sight seeing"),
-#             Interest(name="Fitness"),
-#             Interest(name="Ride a bike"),
-#             Interest(name="Barbecue"),    
-#         ])
-#         db.session.commit()
 
 #--------Interessen hinzufügen-------------------------------
 @app.route('/api/add_interest', methods=['POST'])
@@ -225,6 +205,15 @@ def matching_users():
 
     results = []
     for profile in matching_users:
+        existing = ContactRequest.query.filter(
+            ((ContactRequest.sender_id == user.id) & (ContactRequest.receiver_id == profile.user.id)) |
+            ((ContactRequest.receiver_id == user.id) & (ContactRequest.sender_id == profile.user.id))
+        ).first()
+
+        if existing:
+            continue  #überspringen wenn schon Kontaktanfrage existiert
+
+        #interessen abgleichen
         matching_interests_ids = [i.id for i in profile.interests]
         shared_interests = [i.name for i in profile.interests if i.id in user_interest_ids]
 

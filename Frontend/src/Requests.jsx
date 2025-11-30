@@ -60,6 +60,10 @@ export default function Requests() {
     }
   };
 
+  const removeSentInvite = (index) => {
+    setSentInvites((prev) => prev.filter((_,i) => i !==index));
+  };
+
   return (
     <div className="flex flex-col items-center gap-5 ">
       <h2 className="text-2xl">Requests & Invites</h2>
@@ -152,18 +156,23 @@ export default function Requests() {
       </div>
 
       {/* Gesendete Einladungen Übersicht*/}
-      <div className="md:w-100 md:p-5 bg-white p-4 rounded-lg shadow ">
+      <div className="w-45  md:w-100 md:p-5 bg-white p-4 rounded-lg shadow ">
         <h3 className="text-lg font-semibold mb-2 text-center">Sent Activity Invites</h3>
         {sentInvites.length === 0 ? (
-          <p className="text-sm text-gray-500">No sent invites</p>
+          <p className="text-sm text-gray-500 text-center">No sent invites</p>
         ) : (
           sentInvites.map((inv, i) => (
             <div
               key={i}
-              className="border-b py-2 flex justify-between items-center"
+              className="border-b py-2 flex justify-between items-center "
             >
+
               <div>
+                <div className="flex">
                 <p className="flex">To: {inv.to} </p>
+
+                
+                </div>
                 <p className="text-sm">
                   {inv.activity} 📆 {inv.date}
                 </p>
@@ -179,6 +188,11 @@ export default function Requests() {
                 >{inv.status}                
               </h2>
                 </div>
+                <button
+                    onClick={() => removeSentInvite(i)}
+                    className="ml-9 lg:ml-60  text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded hover:bg-red-500 hover:text-white transition-all">
+                    ✕
+                  </button>
 
             </div>
           ))
