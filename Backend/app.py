@@ -32,12 +32,7 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(
     seconds=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 3600))
 )
 # app.config['JWT_TOKEN_LOCATION'] = [os.getenv('cookies','headers')]
-app.config["JWT_COOKIE_SAMESITE"] = "None"
-app.config['JWT_TOKEN_LOCATION'] = ["cookies"]
-app.config["JWT_COOKIE_SECURE"] = not app.debug
-app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('JWT_COOKIE_CSRF_PROTECT', 'False').lower() == 'true'
-app.config['JWT_ACCESS_COOKIE_NAME'] = os.getenv('JWT_ACCESS_COOKIE_NAME', 'access_token_cookie')
-app.config['JWT_REFRESH_COOKIE_NAME'] = os.getenv('JWT_REFRESH_COOKIE_NAME', 'refresh_token_cookie')
+app.config['JWT_TOKEN_LOCATION'] = ["headers"]
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'uploads')
 
 imagekit = ImageKit(
@@ -114,10 +109,9 @@ def login():
 
         response = jsonify({
             'Message':"Login successfully!",
-            'access_token': access_token,})
-        
-        set_access_cookies(response, access_token)
-        set_refresh_cookies(response, refresh_token)
+            'access_token': access_token,
+            'refresh_token': refresh_token})
+
         return response, 200
     
     return jsonify({'error':'Invalid login'}), 401
@@ -126,21 +120,8 @@ def login():
 @app.route('/api/logout', methods=['POST'])
 def logout():
     resp = jsonify({"msg": "Logout successful"})
-    unset_jwt_cookies(resp)
+    
     return resp, 200
-
-
-# ------------ Token Refresh ------------
-@app.route('/api/refresh', methods=['POST'])
-@jwt_required(refresh=True)
-def refresh():
-    current_user = get_jwt_identity()
-    new_access_token = create_access_token(identity=current_user)
-
-    resp = jsonify({"msg": "Token refreshed"})
-    set_access_cookies(resp, new_access_token)
-    return resp, 200
-
     
 #-----------Profil erstellen/ Updaten/----------------
 
