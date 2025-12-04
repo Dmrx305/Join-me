@@ -10,3 +10,4 @@ Werkzeug
 python-dotenv
 imagekitio
 gunicorn
+psycopg2-binary

@@ -33,7 +33,12 @@ export default function ShowMyProfile() {
         <p><strong>Age:</strong> {user.age}</p>
         <p><strong>City:</strong> {user.city}</p>
         <p><strong>Social Type:</strong> {user.social_type}</p>
-        <p><strong>Interests:</strong> {user.interests.map(i => i.name).join(", ")}</p>
+        <p>
+          <strong>Interests:</strong>{" "}
+          {Array.isArray(user.interests)
+            ? user.interests.map(i => i.name).join(", ")
+            : "No interests"}
+        </p>
 
         <div className="flex justify-center gap-3 mt-4">
           <DeleteProfile />

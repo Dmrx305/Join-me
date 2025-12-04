@@ -12,7 +12,7 @@ from flask_bcrypt import Bcrypt
 from datetime import timedelta
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token,jwt_required, get_jwt_identity, create_refresh_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
-from models import db, User, Profile, Interest, ContactRequest, ActivityInvite
+from models import db, User, UserProfile, Interest, ContactRequest, ActivityInvite
 from imagekitio import ImageKit
 from imagekitio.models.UploadFileRequestOptions import UploadFileRequestOptions
 import base64
@@ -23,12 +23,16 @@ load_dotenv()
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+raw_db_url = os.getenv("DATABASE_URL")
+fixed_db_url = raw_db_url.replace("postgresql://", "postgresql+psycopg2://")
+app.config["SQLALCHEMY_DATABASE_URI"] = fixed_db_url
+
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(
     seconds=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 3600))
 )
-app.config['JWT_TOKEN_LOCATION'] = [os.getenv('cookies','headers')]
+# app.config['JWT_TOKEN_LOCATION'] = [os.getenv('cookies','headers')]
+app.config['JWT_TOKEN_LOCATION'] = ["cookies"]
 app.config['JWT_COOKIE_SECURE'] = os.getenv('JWT_COOKIE_SECURE', 'False').lower() == 'true'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = os.getenv('JWT_COOKIE_CSRF_PROTECT', 'False').lower() == 'true'
 app.config['JWT_ACCESS_COOKIE_NAME'] = os.getenv('JWT_ACCESS_COOKIE_NAME', 'access_token_cookie')
@@ -54,27 +58,10 @@ CORS(
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"]
 )
+print("DB PATH:", fixed_db_url)
 
-# @app.before_request
-# def create_tables():
-#     db.create_all()
-
-# def create_interests():
-#     db.create_all()
-#     if Interest.query.count() == 0:
-#         db.session.add_all([
-#             Interest(name="Hiking"),
-#             Interest(name="Squash"),
-#             Interest(name="Bouldern"),
-#             Interest(name="Swimming"),
-#             Interest(name="Cinema"),
-#             Interest(name="Bar hopping"),
-#             Interest(name="Sight seeing"),
-#             Interest(name="Fitness"),
-#             Interest(name="Ride a bike"),
-#             Interest(name="Barbecue"),    
-#         ])
-#         db.session.commit()
+with app.app_context():
+    db.create_all()
 
 #--------Interessen hinzufügen-------------------------------
 @app.route('/api/add_interest', methods=['POST'])
@@ -95,8 +82,7 @@ def add_interests():
     return jsonify({'message': 'Interest added successfully'}), 201
 
 #------------Registrieren---------------------------------------
-with app.app_context():
-    db.create_all()
+
     
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -185,7 +171,7 @@ def create_or_update_profile():
     
     else:
         #neues profil anlegen
-        profile = Profile(
+        profile = UserProfile(
             name=name,
             age=age,
             city=city,
@@ -199,7 +185,7 @@ def create_or_update_profile():
     db.session.commit()
     db.session.refresh(user) 
     return jsonify({
-        "message": "Profile saved!",
+        "message": "UserProfile saved!",
         "redirect": "/show_my_profile",}), 200
 
 #-----------------Passende User anzeigen-------------------------------------------------------
@@ -218,9 +204,9 @@ def matching_users():
     if not city or not user_interest_ids:
         return jsonify({"error": "User profile incomplete (city or interests missing)"}), 400
     
-    matching_users = Profile.query.filter(
-        Profile.city == city,
-        Profile.user_id != user.id
+    matching_users = UserProfile.query.filter(
+        UserProfile.city == city,
+        UserProfile.user_id != user.id
     ).all()
 
     results = []
