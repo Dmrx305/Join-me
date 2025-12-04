@@ -21,7 +21,13 @@ import base64
 load_dotenv()
 
 app = Flask(__name__)
-
+CORS(app,
+     resources={r"/api/*": {"origins": [
+         "http://localhost:5174",
+         "https://join-me-gamma.vercel.app"
+     ]}},
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"])
 
 raw_db_url = os.getenv("DATABASE_URL")
 fixed_db_url = raw_db_url.replace("postgresql://", "postgresql+psycopg2://")
@@ -44,17 +50,7 @@ imagekit = ImageKit(
 db.init_app(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-CORS(
-    app,
-    supports_credentials=True,
-    origins=[
-        "http://localhost:5173",
-        "https://join-me-gamma.vercel.app",
-    ],
-    allow_headers=["Content-Type", "Authorization"],
-    methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"]
-)
-print("DB PATH:", fixed_db_url)
+
 
 with app.app_context():
     db.create_all()
