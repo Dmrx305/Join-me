@@ -23,7 +23,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app,
      resources={r"/api/*": {"origins": [
-         "http://localhost:5174",
+         "http://localhost:5173",
          "https://join-me-gamma.vercel.app"
      ]}},
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
